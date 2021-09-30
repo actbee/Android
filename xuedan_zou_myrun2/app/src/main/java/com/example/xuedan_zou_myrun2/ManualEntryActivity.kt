@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import java.time.Duration
 
 class ManualEntryActivity : AppCompatActivity(){
     private val INPUT_PROPERTY = arrayOf(
@@ -26,9 +27,21 @@ class ManualEntryActivity : AppCompatActivity(){
             android.R.layout.simple_list_item_1, INPUT_PROPERTY)
         myListView.adapter = arrayAdapter
         myListView.setOnItemClickListener(){ parent: AdapterView<*>, view: View, position: Int, id: Long ->
-            println("debug: parent: $parent | view: $view | position: $position | id: $id")
+            show(position)
         }
+    }
 
+    fun show(position:Int){
+        val fm =supportFragmentManager
+        when(position){
+            0 -> Date_Dialogs().show(fm, "date")
+            1 -> MyTimeDialog().show(fm, "time")
+            2 -> Duration_Dialogs().show(fm, "duration")
+            3 -> Distance_Dialogs().show(fm, "distance")
+            4 ->Calories_Dialogs().show(fm, "calories")
+            5 ->HeartRate_Dialogs().show(fm, "heart_rate")
+            6 ->Manual_Comment().show(fm, "manual_comment")
+        }
     }
 
     fun ManualSavedClicked(view:View?){

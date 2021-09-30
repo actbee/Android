@@ -11,15 +11,10 @@ class FragmentStart:Fragment(){
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
         var view:View=inflater.inflate(R.layout.fragment_start, container, false)
 
         return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-    }
 }
 

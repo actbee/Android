@@ -7,17 +7,25 @@ import androidx.preference.PreferenceFragmentCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.preference.Preference
 
 
 class FragmentSetting: PreferenceFragmentCompat(){
+
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.fragment_setting, rootKey)
-    }
 
-    /*
-    override fun onCreatePreference(inflater: LayoutInflater,
-                              container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_start, container, false)
+        val unit_pref =findPreference<Preference>("unit_preference")!!
+        unit_pref.setOnPreferenceClickListener { _ ->
+            Unit_Preference_dialogs().show(childFragmentManager, "unit")
+            true
+        }
+
+        val comment_pref =findPreference<Preference>("comments")!!
+        comment_pref.setOnPreferenceClickListener { _ ->
+            Comments_Dialogs().show(childFragmentManager, "comment_dialog")
+            true
+        }
     }
-    */
 }

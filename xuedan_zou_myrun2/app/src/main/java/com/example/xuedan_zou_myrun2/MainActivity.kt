@@ -81,17 +81,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun StartClicked(view:View?){
-        /*
-        if(selected=="Manual Entry"){
-            print("gettt!")
-        }*/
-        val intent=Intent(this, MapActivity::class.java)
-        startActivity(intent)
+       val myspinner:Spinner=findViewById(R.id.input_entry)
+        val state=myspinner.selectedItem.toString()
+        when(state){
+            "Manual Entry"-> startActivity(Intent(this, ManualEntryActivity::class.java))
+            else-> startActivity(Intent(this, MapActivity::class.java))
+        }
     }
 
     fun SYNCClicked(view:View?){
-        val intent=Intent(this, ManualEntryActivity::class.java)
-        startActivity(intent)
     }
 
 }

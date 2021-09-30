@@ -5,7 +5,7 @@
     <PreferenceCategory android:title="Account Preferences">
 
         <Preference
-            android:key="@+id/user_profile"
+            android:key="user_profile"
             android:summary="User Profile"
             android:title="Names,Emails,Class,etc">
 
@@ -15,7 +15,7 @@
 
         </Preference>
         <CheckBoxPreference
-            android:key="@+id/checkbox"
+            android:key="checkbox"
             android:summary="Posting your records anonymously"
             android:title="Privacy Setting" />
 
@@ -23,7 +23,7 @@
 
     <PreferenceCategory android:title="Additional Settings">
         <Preference
-            android:key="@+id/unit_preference"
+            android:key="unit_preference"
             android:summary="Select the units"
             android:title="Unit Preference">
 
@@ -34,7 +34,7 @@
         </Preference>
 
         <Preference
-            android:key="@+id/comments"
+            android:key="comments"
             android:summary="Please enter your comments"
             android:title="Comments">
 
@@ -49,7 +49,7 @@
     <PreferenceCategory android:title="Misc.">
         <Preference
             android:layout_width="match_parent"
-            android:key="@+id/webpage"
+            android:key="webpage"
             android:summary="http://web.cs.dartmouth.edu/"
             android:title="Webpage">
 

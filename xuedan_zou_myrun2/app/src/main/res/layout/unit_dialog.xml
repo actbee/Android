@@ -12,14 +12,12 @@
             android:id="@+id/metric"
             android:layout_width="166dp"
             android:layout_height="wrap_content"
-
             android:text="Metric(Kilometers)" />
 
         <RadioButton
             android:id="@+id/imperial"
             android:layout_width="208dp"
             android:layout_height="wrap_content"
-
             android:text="Imperial(Miles)" />
     </RadioGroup>
 </LinearLayout>

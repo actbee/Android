@@ -23,11 +23,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.widget.Toast
 import android.graphics.Bitmap
+import java.lang.Math.max
 
 
 class ProfileActivity : AppCompatActivity() {
 
-    private lateinit var  temp_img_uri: Uri
+    lateinit var  temp_img_uri: Uri
     private lateinit var  saved_img_uri: Uri
     private lateinit var  view_model: ViewModel
     private lateinit var  image_view: ImageView
@@ -94,12 +95,28 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    val pickImage: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result: ActivityResult ->
+        if(result.resultCode == Activity.RESULT_OK){
+            val uri = result.data!!.data!!
+            val arr = ByteArray(2048)
+            val ins = contentResolver.openInputStream(uri)!!
+            val ots = contentResolver.openOutputStream(temp_img_uri)!!
+            var read: Int
+            while (ins.read(arr).also{read = it} > 0) {
+                ots.write(arr.copyOfRange(0, max(0, read)))
+            }
+            ins.close()
+            ots.close()
+            val bitmap = Util.get_bitmap(this, temp_img_uri)
+            view_model.user_img.value = bitmap
+        }
+    }
 
     fun onClicked_changephoto(view: View){
-
-        val intent=Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,temp_img_uri)
-        cameraResult.launch(intent)
+        print(view.id.toString())
+        Photo_Change(this).show(supportFragmentManager, "change_image")
     }
 
     fun onSaveClicked(view :View){
