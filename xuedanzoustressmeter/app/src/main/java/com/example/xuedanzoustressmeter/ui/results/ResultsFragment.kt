@@ -1,4 +1,4 @@
-package com.example.xuedanzoustressmeter.ui.home
+package com.example.xuedanzoustressmeter.ui.results
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,13 +8,12 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.xuedanzoustressmeter.R
-import com.example.xuedanzoustressmeter.databinding.FragmentHomeBinding
+import com.example.xuedanzoustressmeter.databinding.FragmentResultsBinding
 
-class HomeFragment : Fragment() {
+class ResultsFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
-    private var _binding: FragmentHomeBinding? = null
+    private lateinit var resultsViewModel: ResultsViewModel
+    private var _binding: FragmentResultsBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -25,14 +24,14 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+        resultsViewModel =
+            ViewModelProvider(this).get(ResultsViewModel::class.java)
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentResultsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
+        val textView: TextView = binding.textResults
+        resultsViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
         return root
