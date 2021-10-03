@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.xuedanzoustressmeter.R
 import com.example.xuedanzoustressmeter.databinding.FragmentStressmeterBinding
 
 class StressmeterFragment : Fragment() {
@@ -17,11 +18,12 @@ class StressmeterFragment : Fragment() {
 
     private val binding get() = _binding!!
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?): View? {
+
+        /*
+
+       // not use viewmodel here
         stressmeterViewModel =
             ViewModelProvider(this).get(StressmeterModel::class.java)
 
@@ -32,7 +34,16 @@ class StressmeterFragment : Fragment() {
         stressmeterViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
+
+
+        val root: View= binding.root
         return root
+
+         */
+
+        var view: View = inflater.inflate(R.layout.fragment_stressmeter, container, false)
+        return view
+
     }
 
     override fun onDestroyView() {
