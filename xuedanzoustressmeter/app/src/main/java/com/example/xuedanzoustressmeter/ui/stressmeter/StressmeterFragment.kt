@@ -131,7 +131,7 @@ class StressmeterFragment : Fragment() {
             intent.putExtra("value", input_value)
             pref.edit().putInt("saved_state", state).apply()
             startActivity(intent)
-            requireActivity().finish()
+       //    requireActivity().finish()
         }
 
         val more_button = view.findViewById<Button>(R.id.more_images)!!
@@ -167,7 +167,7 @@ class StressmeterFragment : Fragment() {
                 intent.putExtra("value", input_value)
                 pref.edit().putInt("saved_state", state).apply()
                 startActivity(intent)
-                requireActivity().finish()
+             //  requireActivity().finish()
             }
         }
 

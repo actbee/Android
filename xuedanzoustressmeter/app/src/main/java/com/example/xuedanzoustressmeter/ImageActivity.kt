@@ -1,9 +1,11 @@
 package com.example.xuedanzoustressmeter
 
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.ImageView
@@ -17,8 +19,16 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.getSystemService
 import com.example.xuedanzoustressmeter.databinding.ActivityMainBinding
+import java.io.File
+import java.nio.file.Paths
 import kotlin.system.exitProcess
+import java.io.FileWriter
+import java.io.IOException
+import java.sql.Time
+import java.util.Arrays
+
 
 class ImageActivity: AppCompatActivity() {
     private  var image_id: Int = 0
@@ -41,12 +51,15 @@ class ImageActivity: AppCompatActivity() {
         val pref: SharedPreferences = this.getSharedPreferences("stress_saved",
             Context.MODE_PRIVATE)
         pref.edit().putInt("saved_state", (1..3).random()).apply()
-        startActivity(Intent(this, MainActivity::class.java))
+
+        val time = System.currentTimeMillis()
+        val file = File(getExternalFilesDir(null), "customer.csv")
+        file.appendText("$time,$image_value\n")
         finish()
     }
 
     fun onImageCancelClicked(view: View?){
-        startActivity(Intent(this, MainActivity::class.java))
+     //   startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
