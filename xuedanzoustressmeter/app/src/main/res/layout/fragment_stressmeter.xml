@@ -24,11 +24,15 @@ stressed you fell right now"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="20dp"/>
 
-    <GridView
-        android:id="@+id/grid_images"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:numColumns="4"/>
+        <GridView
+            android:id="@+id/grid_images"
+            android:layout_width="280dp"
+            android:layout_height="300dp"
+            android:numColumns="4"
+            android:stretchMode="columnWidth"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_gravity="center"/>
 
 
     <Button
@@ -37,7 +41,7 @@ stressed you fell right now"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="500dp"
+        android:layout_marginTop="130dp"
         android:backgroundTint="#a9a9a9"
         android:onClick="MoreImagesClicked"
         android:text="MORE IMAGES"

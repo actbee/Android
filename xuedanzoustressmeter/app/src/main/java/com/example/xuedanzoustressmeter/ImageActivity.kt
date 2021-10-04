@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.widget.ImageView
+import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -16,12 +18,23 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.xuedanzoustressmeter.databinding.ActivityMainBinding
 
 class ImageActivity: AppCompatActivity() {
+    private  var image_id: Int = 0
+    private  var image_value: Int = -1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.imagepage_layout)
+
+        val intent: Intent = getIntent()
+        image_id = intent.getIntExtra("image_id", 0)
+        image_value = intent.getIntExtra("value", -1)
+        if(image_id!=0) {
+            val my_imageview:ImageView? = findViewById<ImageView>(R.id.imageclicked)
+            my_imageview!!.setImageResource(image_id)
+        }
     }
 
     fun onImageSubmitClicked(view: View?){
+        Toast.makeText(this,image_value.toString(), Toast.LENGTH_SHORT).show()
         startActivity(Intent(this, MainActivity::class.java))
     }
 
