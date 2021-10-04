@@ -1,6 +1,8 @@
 package com.example.xuedanzoustressmeter
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -16,6 +18,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.example.xuedanzoustressmeter.databinding.ActivityMainBinding
+import kotlin.system.exitProcess
 
 class ImageActivity: AppCompatActivity() {
     private  var image_id: Int = 0
@@ -35,11 +38,16 @@ class ImageActivity: AppCompatActivity() {
 
     fun onImageSubmitClicked(view: View?){
         Toast.makeText(this,image_value.toString(), Toast.LENGTH_SHORT).show()
+        val pref: SharedPreferences = this.getSharedPreferences("stress_saved",
+            Context.MODE_PRIVATE)
+        pref.edit().putInt("saved_state", (1..3).random()).apply()
         startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     fun onImageCancelClicked(view: View?){
         startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
 }

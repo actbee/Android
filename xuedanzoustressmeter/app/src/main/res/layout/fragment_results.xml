@@ -43,12 +43,18 @@
             android:textAlignment="center"
             android:text="Summary of Results" />
 
-        <TableLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
+        <TableLayout
+            android:id="@+id/result_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true">
 
             <TableRow
-                android:background="#a9a9a9">
+                android:background="#a9a9a9"
+                android:layout_marginBottom="5dp">
               <TextView
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
@@ -69,6 +75,7 @@
             </TableRow>
 
         </TableLayout>
+        </ScrollView>
 
     </LinearLayout>
 </ScrollView>

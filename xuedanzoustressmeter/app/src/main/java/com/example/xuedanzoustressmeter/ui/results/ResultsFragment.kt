@@ -1,11 +1,15 @@
 package com.example.xuedanzoustressmeter.ui.results
 
+import android.app.ActionBar
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TableLayout
+import android.widget.TableRow
 import android.widget.TextView
+import androidx.core.view.marginLeft
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,9 +28,11 @@ class ResultsFragment : Fragment() {
 
     // This property is only valid between onCreateView and
     // onDestroyView.
-    private val binding get() = _binding!!
+        private val binding get() = _binding!!
 
-    private lateinit var my_chart: LineChartView
+        private lateinit var my_chart: LineChartView
+
+        private lateinit var my_table: TableLayout
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?): View? {
@@ -89,6 +95,32 @@ class ResultsFragment : Fragment() {
         data.axisXBottom = axisX
 
         my_chart.setLineChartData(data)
+
+        my_table = view.findViewById(R.id.result_table)
+        var i:Int = 1
+        while(i<11){
+            var row_added: TableRow = TableRow(requireContext())
+            var lp: TableRow.LayoutParams = TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT)
+            row_added.setLayoutParams(lp)
+            var time_view:TextView = TextView(requireContext())
+            lp.width=700
+            time_view.layoutParams = lp
+            time_view.setText("  "+i*100000000)
+            time_view.setBackgroundResource(R.drawable.stroke_textview)
+            row_added.addView(time_view)
+
+            var stress_view:TextView = TextView(requireContext())
+            stress_view.setText(" "+i)
+            var stress_lp: TableRow.LayoutParams = TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT)
+            stress_lp.width=400
+            stress_view.layoutParams = stress_lp
+            stress_view.setBackgroundResource(R.drawable.stroke_textview)
+            row_added.addView(stress_view)
+            my_table.addView(row_added, i)
+
+            i++
+        }
+
 
         return view
 

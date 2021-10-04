@@ -93,7 +93,7 @@ class StressmeterFragment : Fragment() {
          */
 
         val pref: SharedPreferences = requireActivity().getSharedPreferences("stress_saved",Context.MODE_PRIVATE)
-        state = pref.getInt("saved_state", 1)
+        state = pref.getInt("saved_state", (1..3).random())
 
 
         var view: View = inflater.inflate(R.layout.fragment_stressmeter, container, false)
@@ -131,6 +131,7 @@ class StressmeterFragment : Fragment() {
             intent.putExtra("value", input_value)
             pref.edit().putInt("saved_state", state).apply()
             startActivity(intent)
+            requireActivity().finish()
         }
 
         val more_button = view.findViewById<Button>(R.id.more_images)!!
@@ -166,6 +167,7 @@ class StressmeterFragment : Fragment() {
                 intent.putExtra("value", input_value)
                 pref.edit().putInt("saved_state", state).apply()
                 startActivity(intent)
+                requireActivity().finish()
             }
         }
 
