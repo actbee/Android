@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
     tools:context=".ui.stressmeter.StressmeterFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <TextView
         android:id="@+id/text_stressmeter"
@@ -17,7 +21,15 @@ stressed you fell right now"
         android:textSize="20sp"
         android:layout_marginTop="50dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"/>
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="20dp"/>
+
+    <GridView
+        android:id="@+id/grid_images"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:numColumns="4"/>
+
 
     <Button
         android:id="@+id/more_images"
@@ -30,5 +42,6 @@ stressed you fell right now"
         android:onClick="MoreImagesClicked"
         android:text="MORE IMAGES"
         />
+    </LinearLayout>
 
-</LinearLayout>
+</ScrollView>

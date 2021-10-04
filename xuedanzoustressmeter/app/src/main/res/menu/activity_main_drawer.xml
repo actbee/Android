@@ -9,7 +9,7 @@
             android:title="StressMeter" />
         <item
             android:id="@+id/nav_results"
-            android:title="Reulsts" />
+            android:title="Results" />
 
     </group>
 </menu>
