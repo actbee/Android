@@ -143,7 +143,7 @@ class ResultsFragment : Fragment() {
             row_added.addView(time_view)
 
             var stress_view:TextView = TextView(requireContext())
-            stress_view.setText(" "+time_array[count_time])
+            stress_view.setText(" "+stress_array[count_time])
             var stress_lp: TableRow.LayoutParams = TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT)
             stress_lp.width=400
             stress_view.layoutParams = stress_lp
