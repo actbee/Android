@@ -1,5 +1,6 @@
 package com.example.xuedan_zou_myrun2
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 
@@ -47,6 +49,12 @@ class FragmentHistory:Fragment(){
            historyAdapter.notifyDataSetChanged()
        })
 
+        history_listview.setOnItemClickListener(){ parent: AdapterView<*>, view: View, position: Int, id: Long ->
+            // get the ExerciseEntry we get
+            val item:ExerciseEntry = history_listview.getItemAtPosition(position) as ExerciseEntry
+            Toast.makeText(requireActivity(),item.id.toString(), Toast.LENGTH_SHORT).show()
+            startActivity(Intent(requireActivity(), DisplayEntryActivity::class.java))
+        }
 
         return view
     }
