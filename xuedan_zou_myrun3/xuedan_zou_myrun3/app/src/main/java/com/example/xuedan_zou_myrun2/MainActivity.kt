@@ -1,8 +1,10 @@
 package com.example.xuedan_zou_myrun2
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
@@ -81,12 +83,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun StartClicked(view:View?){
-       val myspinner:Spinner=findViewById(R.id.input_entry)
-        val state=myspinner.selectedItem.toString()
+       val myinput_spinner:Spinner=findViewById(R.id.input_entry)
+        val state=myinput_spinner.selectedItem.toString()
         when(state){
             "Manual Entry"-> startActivity(Intent(this, ManualEntryActivity::class.java))
             else-> startActivity(Intent(this, MapActivity::class.java))
         }
+        val pref1 : SharedPreferences =this.getSharedPreferences("start",
+            Context.MODE_PRIVATE)
+        // manual 0, gps 1, automatic 2
+        pref1.edit().putInt("saved_inputtype",
+            myinput_spinner.selectedItemPosition).apply()
+        val myactivity_spinner: Spinner=findViewById(R.id.activity_entry)
+        val pref2 : SharedPreferences =this.getSharedPreferences("start",
+            Context.MODE_PRIVATE)
+        // running 1, walking 2, standing 3, cycling 4, hiking 5,
+        // downhill skiing 6, cross-country skiing 7, snowboarding 8,
+        // skating 9, swimming 10, mountain biking 11, wheelchair 12,
+        // elliptical 13, other 14
+        pref2.edit().putInt("saved_activitytype",
+             myactivity_spinner.selectedItemPosition).apply()
     }
 
     fun SYNCClicked(view:View?){

@@ -1,7 +1,9 @@
 package com.example.xuedan_zou_myrun2
 // almost used the demo code of this part
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -9,6 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import java.time.Duration
 
 class ManualEntryActivity : AppCompatActivity(){
@@ -19,6 +22,8 @@ class ManualEntryActivity : AppCompatActivity(){
     private lateinit var database: ExerciseEntryDatabase
     private lateinit var repository: ExerciseEntryRepository
     private lateinit var databaseDao: ExerciseEntryDatabaseDao
+    private lateinit var viewModelFactory: ExerciseEntryViewModelFactory
+    private lateinit var exerciseentryViewModel: ExerciseEntryViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +35,9 @@ class ManualEntryActivity : AppCompatActivity(){
         database = ExerciseEntryDatabase.getInstance(this)
         databaseDao = database.exerciseEntryDatabaseDao
         repository = ExerciseEntryRepository(databaseDao)
+        viewModelFactory = ExerciseEntryViewModelFactory(repository)
+        exerciseentryViewModel = ViewModelProvider(this,
+            viewModelFactory).get(ExerciseEntryViewModel::class.java)
 
 
         val arrayAdapter: ArrayAdapter<String> = ArrayAdapter<String>(this,
@@ -55,15 +63,37 @@ class ManualEntryActivity : AppCompatActivity(){
     }
 
     fun ManualSavedClicked(view:View?){
+        // save all the data to the ExerciseEntry data class and be inserted to the database
+        val pref : SharedPreferences =this.getSharedPreferences("start",
+            Context.MODE_PRIVATE)
+        val exercise_entry = ExerciseEntry()
+        exercise_entry.activityType = pref.getInt("saved_activitytype", 0)
+        exercise_entry.inputType = pref.getInt("saved_inputtype", 0)
+        exercise_entry.dateTime = pref.getString("saved_time", "0") + pref.getString("saved_date","0")
+        exercise_entry.duration = pref.getInt("saved_duration", 0)
+        exercise_entry.distance = pref.getFloat("saved_distance", 0F)
+        exercise_entry.calorie = pref.getFloat("saved_calorie", 0F)
+        exercise_entry.heartRate = pref.getInt("saved_heartrate", 0)
 
-
-        val intent= Intent(this, MainActivity::class.java)
-        startActivity(intent)
+        exerciseentryViewModel.insert(exercise_entry)
+        // then clean out the sharedpreference
+        pref.edit().clear().commit()
+        Toast.makeText(this,"Entry # ${exercise_entry.id} Saved!", Toast.LENGTH_SHORT).show()
+     //   val intent= Intent(this, MainActivity::class.java)
+     //   startActivity(intent)
+        finish()
     }
 
     fun ManualCancelClicked(view:View?){
+        //  also clean out the sharedpreference
+        val pref : SharedPreferences =this.getSharedPreferences("start",
+            Context.MODE_PRIVATE)
+        pref.edit().clear()
+        pref.edit().commit()
+
         Toast.makeText(this,"Entry discared!", Toast.LENGTH_SHORT).show()
-        val intent= Intent(this, MainActivity::class.java)
-        startActivity(intent)
+     //   val intent= Intent(this, MainActivity::class.java)
+     //   startActivity(intent)
+        finish()
     }
 }

@@ -68,10 +68,10 @@ class Unit_Preference_dialogs: DialogFragment() {
 }
 
 class Date_Dialogs: DialogFragment(), DatePickerDialog.OnDateSetListener {
-    val pref : SharedPreferences =requireActivity().getSharedPreferences("saved_date",
-        Context.MODE_PRIVATE)
     val calendar = Calendar.getInstance()
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog{
+        val pref : SharedPreferences =requireActivity().getSharedPreferences("start",
+            Context.MODE_PRIVATE)
         val datePickerDialog = DatePickerDialog(
             requireContext(), this,
             calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
@@ -81,8 +81,10 @@ class Date_Dialogs: DialogFragment(), DatePickerDialog.OnDateSetListener {
             dismiss()
         }
         datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Ok") { _, _ ->
-            pref.edit().putString("saved_date",
-                Calendar.MONTH.toString()+Calendar.DAY_OF_MONTH.toString()+Calendar.YEAR.toString()).apply()
+           pref.edit().putString("saved_date",
+                Calendar.MONTH.toString()
+                        +Calendar.DAY_OF_MONTH.toString()+Calendar.YEAR.toString()
+            ).apply()
             dismiss()
         }
         return datePickerDialog
@@ -93,10 +95,10 @@ class Date_Dialogs: DialogFragment(), DatePickerDialog.OnDateSetListener {
 }
 
 class MyTimeDialog: DialogFragment(), TimePickerDialog.OnTimeSetListener{
-    val pref : SharedPreferences =requireActivity().getSharedPreferences("saved_time",
-        Context.MODE_PRIVATE)
     val calendar = Calendar.getInstance()
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val pref : SharedPreferences =requireActivity().getSharedPreferences("start",
+            Context.MODE_PRIVATE)
         val timePickerDialog = TimePickerDialog(
             requireContext(), this,
             calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true
@@ -118,7 +120,7 @@ class MyTimeDialog: DialogFragment(), TimePickerDialog.OnTimeSetListener{
 
 class Duration_Dialogs: DialogFragment(){
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val pref : SharedPreferences =requireActivity().getSharedPreferences("saved_duration",
+        val pref : SharedPreferences =requireActivity().getSharedPreferences("start",
             Context.MODE_PRIVATE)
         val view = requireActivity().layoutInflater.inflate(
             R.layout.text_dialog, null
@@ -128,8 +130,12 @@ class Duration_Dialogs: DialogFragment(){
             .setTitle("Duration")
                 .setView(view)
             .setPositiveButton("OK") { _, _ ->
-                pref.edit().putInt("saved_duration",
-                    edit.text.toString().toInt()).apply()
+                if(!edit.text.toString().isBlank()) {
+                    pref.edit().putInt(
+                        "saved_duration",
+                        edit.text.toString().toInt()
+                    ).apply()
+                }
                 dismiss()
             }
             .setNegativeButton("CANCEL") { _, _ ->
@@ -141,7 +147,7 @@ class Duration_Dialogs: DialogFragment(){
 }
 class Distance_Dialogs: DialogFragment(){
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val pref : SharedPreferences =requireActivity().getSharedPreferences("saved_distance",
+        val pref : SharedPreferences =requireActivity().getSharedPreferences("start",
             Context.MODE_PRIVATE)
         val view = requireActivity().layoutInflater.inflate(
             R.layout.text_dialog, null
@@ -151,9 +157,13 @@ class Distance_Dialogs: DialogFragment(){
             .setTitle("Distance")
                 .setView(view)
             .setPositiveButton("OK") { _, _ ->
-                pref.edit().putFloat("saved_distance",
-                edit.text.toString().toFloat()).apply()
-                dismiss()
+                if(!edit.text.toString().isBlank()) {
+                    pref.edit().putFloat(
+                        "saved_distance",
+                        edit.text.toString().toFloat()
+                    ).apply()
+                    dismiss()
+                }
             }
             .setNegativeButton("CANCEL") { _, _ ->
                 dismiss()
@@ -164,7 +174,7 @@ class Distance_Dialogs: DialogFragment(){
 }
 class Calories_Dialogs: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val pref : SharedPreferences =requireActivity().getSharedPreferences("saved_calorie",
+        val pref : SharedPreferences =requireActivity().getSharedPreferences("start",
             Context.MODE_PRIVATE)
         val view = requireActivity().layoutInflater.inflate(
             R.layout.text_dialog, null
@@ -174,9 +184,13 @@ class Calories_Dialogs: DialogFragment() {
             .setView(view)
             .setTitle("Calories")
             .setPositiveButton("OK") { _, _ ->
-                pref.edit().putFloat("saved_calorie",
-                    edit.text.toString().toFloat()).apply()
-                dismiss()
+                if(!edit.text.toString().isBlank()) {
+                    pref.edit().putFloat(
+                        "saved_calorie",
+                        edit.text.toString().toFloat()
+                    ).apply()
+                    dismiss()
+                }
             }
             .setNegativeButton("CANCEL") { _, _ ->
                 dismiss()
@@ -188,7 +202,7 @@ class Calories_Dialogs: DialogFragment() {
 
 class HeartRate_Dialogs: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val pref : SharedPreferences =requireActivity().getSharedPreferences("saved_heartrate",
+        val pref : SharedPreferences =requireActivity().getSharedPreferences("start",
             Context.MODE_PRIVATE)
         val view = requireActivity().layoutInflater.inflate(
             R.layout.text_dialog, null
@@ -198,9 +212,13 @@ class HeartRate_Dialogs: DialogFragment() {
             .setTitle("Heart Rate")
                 .setView(view)
             .setPositiveButton("OK") { _, _ ->
-                pref.edit().putInt("saved_heartrate",
-                    edit.toString().toInt()).apply()
+                if (!edit.text.toString().isBlank()) {
+                pref.edit().putInt(
+                    "saved_heartrate",
+                    edit.toString().toInt()
+                ).apply()
                 dismiss()
+            }
             }
             .setNegativeButton("CANCEL") { _, _ ->
                 dismiss()
