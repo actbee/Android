@@ -90,6 +90,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun SYNCClicked(view:View?){
+        startActivity(Intent(this, DisplayEntryActivity::class.java))
     }
 
 }

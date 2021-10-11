@@ -14,8 +14,7 @@ class DisplayEntryActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.manual_entry_layout)
-
+        setContentView(R.layout.display_entry_layout)
 
         }
 

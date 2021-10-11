@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1935185185185185" />
         <entry key="app/src/main/res/layout/comment_dialog.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/display_entry_layout.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_history.xml" value="0.1935185185185185" />
         <entry key="app/src/main/res/layout/fragment_setting.xml" value="0.1935185185185185" />
         <entry key="app/src/main/res/layout/fragment_start.xml" value="0.1" />

@@ -30,6 +30,9 @@
         <activity
             android:name=".ManualEntryActivity"
             android:label="@string/app_name" />
+        <activity
+            android:name=".DisplayEntryActivity"
+            android:label="@string/app_name" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
