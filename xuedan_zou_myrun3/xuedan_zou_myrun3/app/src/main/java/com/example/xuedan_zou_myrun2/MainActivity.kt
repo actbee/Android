@@ -97,10 +97,10 @@ class MainActivity : AppCompatActivity() {
         val myactivity_spinner: Spinner=findViewById(R.id.activity_entry)
         val pref2 : SharedPreferences =this.getSharedPreferences("start",
             Context.MODE_PRIVATE)
-        // running 1, walking 2, standing 3, cycling 4, hiking 5,
-        // downhill skiing 6, cross-country skiing 7, snowboarding 8,
-        // skating 9, swimming 10, mountain biking 11, wheelchair 12,
-        // elliptical 13, other 14
+        // running 0, walking 1, standing 2, cycling 3, hiking 4,
+        // downhill skiing 5, cross-country skiing 6, snowboarding 7,
+        // skating 8, swimming 9, mountain biking 10, wheelchair 11,
+        // elliptical 12, other 13
         pref2.edit().putInt("saved_activitytype",
              myactivity_spinner.selectedItemPosition).apply()
     }

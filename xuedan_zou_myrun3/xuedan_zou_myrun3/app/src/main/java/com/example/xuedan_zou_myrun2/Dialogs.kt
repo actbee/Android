@@ -62,6 +62,9 @@ class Unit_Preference_dialogs: DialogFragment() {
         val builder = AlertDialog.Builder(requireContext())
             .setTitle("Unit Preference")
             .setView(view)
+            .setNegativeButton("CANCEL"){ _, _->
+                dismiss()
+            }
 
         return builder.create()
     }

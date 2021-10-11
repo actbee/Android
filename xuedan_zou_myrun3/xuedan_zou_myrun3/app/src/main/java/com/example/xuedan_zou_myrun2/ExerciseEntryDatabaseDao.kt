@@ -17,4 +17,5 @@ interface ExerciseEntryDatabaseDao {
 
     @Query("DELETE FROM exercise_entry_table WHERE id = :key")
     suspend fun delete_value(key: Long)
+
 }
