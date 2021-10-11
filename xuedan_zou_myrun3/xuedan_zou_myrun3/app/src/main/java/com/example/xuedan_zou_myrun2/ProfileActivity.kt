@@ -23,6 +23,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.widget.Toast
 import android.graphics.Bitmap
+import androidx.lifecycle.ViewModel
 import java.lang.Math.max
 
 
@@ -30,7 +31,7 @@ class ProfileActivity : AppCompatActivity() {
 
     lateinit var  temp_img_uri: Uri
     private lateinit var  saved_img_uri: Uri
-    private lateinit var  view_model: ViewModel
+    private lateinit var  view_model: viewmodel
     private lateinit var  image_view: ImageView
     private lateinit var  name_view: EditText
     private lateinit var  email_view: EditText
@@ -69,7 +70,7 @@ class ProfileActivity : AppCompatActivity() {
 
         val SharedPreference :SharedPreferences=this.getSharedPreferences(sharedPrefFile, Context.MODE_PRIVATE)  //to save data
 
-        view_model = ViewModelProvider(this).get(ViewModel::class.java)
+        view_model = ViewModelProvider(this).get(viewmodel::class.java)
         view_model.user_img.observe(this, {        //in the ViewModel to observe any change to the image
                 it -> image_view.setImageBitmap(it)
         })

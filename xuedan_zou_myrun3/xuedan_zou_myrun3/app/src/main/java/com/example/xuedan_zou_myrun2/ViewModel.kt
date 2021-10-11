@@ -6,6 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class ViewModel: ViewModel() {
+class viewmodel: ViewModel() {
     val user_img = MutableLiveData<Bitmap>()
 }
