@@ -85,18 +85,18 @@ class DisplayEntryActivity : AppCompatActivity(){
         duration_view.setText(get_duration.toString()+"secs")
         calorie_view.setText(get_calorie.toString()+" cals")
         heart_view.setText(get_heartrate.toString()+" bpm")
+        distance_view.setText(get_distance.toString()+" Kilometers")
 
         // convert the unit when caculating the distance! we save the distance as kilo in our database
-        val pref: SharedPreferences = this.getSharedPreferences("unit", Context.MODE_PRIVATE)
-        val unit_choice = pref.getInt("unit", -1)
+        val pref: SharedPreferences = this.getSharedPreferences("unit_saved", Context.MODE_PRIVATE)
+        val unit_choice = pref.getInt("unit", 0)
         when(unit_choice){
-            0 -> distance_view.setText(get_distance.toString()+" Kilometers")
-            1 -> {
-                val convert:Float = get_distance/0.621371F
+            2131296542 -> distance_view.setText(get_distance.toString()+" Kilometers")
+            else -> {
+                val convert:Float = get_distance * 0.621371F
                 distance_view.setText(convert.toString()+" Miles")
             }
         }
-        distance_view.setText(get_distance.toString()+" Miles")
 
         //  Toast.makeText(this,"get!"+ get_id.toString(), Toast.LENGTH_SHORT).show()
         // read the database according to the given id
@@ -107,9 +107,7 @@ class DisplayEntryActivity : AppCompatActivity(){
         exerciseentryViewModel = ViewModelProvider(this,
             viewModelFactory).get(ExerciseEntryViewModel::class.java)
 
-
     }
-
 
     // add the delte bottom to the actionbar
 
@@ -121,7 +119,8 @@ class DisplayEntryActivity : AppCompatActivity(){
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         var id:Int = item.getItemId()
         if (id == R.id.history_delete_button){
-
+            exerciseentryViewModel.delete(get_id)
+            finish()
         }
         return super.onOptionsItemSelected(item)
     }

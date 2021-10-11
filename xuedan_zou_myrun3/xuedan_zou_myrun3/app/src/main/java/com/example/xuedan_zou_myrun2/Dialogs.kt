@@ -1,22 +1,19 @@
 package com.example.xuedan_zou_myrun2
 
+import android.widget.Toast
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
-import android.widget.EditText
-import android.widget.RadioGroup
-import android.widget.DatePicker
-import android.widget.TimePicker
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.provider.MediaStore
 import android.text.InputType
-import android.widget.TextView
+import android.widget.*
 import java.util.*
 
 
@@ -49,7 +46,7 @@ class Comments_Dialogs: DialogFragment(){
 class Unit_Preference_dialogs: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val pref: SharedPreferences = requireActivity().getSharedPreferences(
-            "unit",
+            "unit_saved",
             Context.MODE_PRIVATE
         )
         val view  = requireActivity().layoutInflater.inflate(R.layout.unit_dialog, null)
@@ -57,6 +54,7 @@ class Unit_Preference_dialogs: DialogFragment() {
         rg.check(pref.getInt("unit", 0))
         rg.setOnCheckedChangeListener { _, which ->
             pref.edit().putInt("unit", which).apply()
+            Toast.makeText(requireActivity(),"get!"+ which.toString(), Toast.LENGTH_SHORT).show()
         }
 
         val builder = AlertDialog.Builder(requireContext())
@@ -152,6 +150,10 @@ class Distance_Dialogs: DialogFragment(){
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val pref : SharedPreferences =requireActivity().getSharedPreferences("start",
             Context.MODE_PRIVATE)
+        val pref_unit: SharedPreferences = requireActivity().getSharedPreferences(
+            "unit_saved",
+            Context.MODE_PRIVATE
+        )
         val view = requireActivity().layoutInflater.inflate(
             R.layout.text_dialog, null
         )
@@ -160,11 +162,25 @@ class Distance_Dialogs: DialogFragment(){
             .setTitle("Distance")
                 .setView(view)
             .setPositiveButton("OK") { _, _ ->
+                val unit = pref_unit.getInt("unit", 0)
+               // Toast.makeText(requireActivity(),"get!"+ unit.toString(), Toast.LENGTH_SHORT).show()
                 if(!edit.text.toString().isBlank()) {
-                    pref.edit().putFloat(
-                        "saved_distance",
-                        edit.text.toString().toFloat()
-                    ).apply()
+                    when(unit){
+                        2131296542 ->{
+                            // just save them as kl in database
+                            pref.edit().putFloat(
+                                "saved_distance",
+                                edit.text.toString().toFloat()
+                            ).apply()
+                        }
+                        else ->{
+                            // transfer m to kl and save them in database
+                            pref.edit().putFloat(
+                                "saved_distance",
+                                edit.text.toString().toFloat() /0.621371F
+                            ).apply()
+                        }
+                    }
                     dismiss()
                 }
             }

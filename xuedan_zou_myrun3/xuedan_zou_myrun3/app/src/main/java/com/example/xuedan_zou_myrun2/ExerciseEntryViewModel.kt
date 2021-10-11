@@ -20,6 +20,8 @@ class ExerciseEntryViewModel(private val repository: ExerciseEntryRepository): V
         repository.delete(id)
     }
 
+    /*
+    // try to get the id of the last database but seems no use
     fun getID():Long{
         val exerciseEntryList = allExerciseEntryLiveData.value
         if (exerciseEntryList != null && exerciseEntryList.size > 0) {
@@ -28,6 +30,7 @@ class ExerciseEntryViewModel(private val repository: ExerciseEntryRepository): V
         }
         return -1
     }
+     */
 
 }
 

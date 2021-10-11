@@ -89,6 +89,8 @@ class MainActivity : AppCompatActivity() {
             "Manual Entry"-> startActivity(Intent(this, ManualEntryActivity::class.java))
             else-> startActivity(Intent(this, MapActivity::class.java))
         }
+
+        // save the necessary data
         val pref1 : SharedPreferences =this.getSharedPreferences("start",
             Context.MODE_PRIVATE)
         // manual 0, gps 1, automatic 2

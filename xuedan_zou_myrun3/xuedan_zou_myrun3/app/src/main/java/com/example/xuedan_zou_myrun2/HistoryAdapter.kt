@@ -2,6 +2,7 @@ package com.example.xuedan_zou_myrun2
 
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -22,9 +23,25 @@ class HistoryAdapter(val context: Context, var ExerciseEntryList: List<ExerciseE
         val my_title = view.findViewById<TextView>(R.id.Title)
         val my_subtitle = view.findViewById<TextView>(R.id.subTitle)
         my_title.text = ExerciseEntryList.get(position).id.toString()
-        my_subtitle.text = ExerciseEntryList.get(position).distance.toString()+"Miles, "+
-                ExerciseEntryList.get(position).duration.toString()+"secs"
 
+        // need to modify our way to show the distance according to the saved_unit
+        val pref: SharedPreferences = context.getSharedPreferences(
+            "unit_saved",
+            Context.MODE_PRIVATE
+        )
+        val unit = pref.getInt("unit", 0)
+        when(unit){
+            2131296542 ->{
+                my_subtitle.text = ExerciseEntryList.get(position).distance.toString()+" Kilometers, "+
+                        ExerciseEntryList.get(position).duration.toString()+"secs"
+
+            }
+                else ->{
+                    var transfer = ExerciseEntryList.get(position).distance * 0.621371F
+                    my_subtitle.text = transfer.toString()+" Miles, "+
+                            ExerciseEntryList.get(position).duration.toString()+"secs"
+                }
+        }
         return view
     }
 

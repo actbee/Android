@@ -10,6 +10,7 @@ class ExerciseEntryRepository(private val exerciseEntryDatabaseDao: ExerciseEntr
 
     val allExerciseEntry: Flow<List<ExerciseEntry>> = exerciseEntryDatabaseDao.getAll()
 
+    // handle the related operations in other threads
     fun insert(exerciseEntry: ExerciseEntry){
         CoroutineScope(IO).launch{
             exerciseEntryDatabaseDao.insert_value(exerciseEntry)
