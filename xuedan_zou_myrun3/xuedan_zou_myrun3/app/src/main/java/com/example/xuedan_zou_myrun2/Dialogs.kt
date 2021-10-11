@@ -215,7 +215,7 @@ class HeartRate_Dialogs: DialogFragment() {
                 if (!edit.text.toString().isBlank()) {
                 pref.edit().putInt(
                     "saved_heartrate",
-                    edit.toString().toInt()
+                    edit.text.toString().toInt()
                 ).apply()
                 dismiss()
             }

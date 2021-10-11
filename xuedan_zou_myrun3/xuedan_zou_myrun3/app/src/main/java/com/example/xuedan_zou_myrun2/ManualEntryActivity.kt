@@ -78,7 +78,8 @@ class ManualEntryActivity : AppCompatActivity(){
         exerciseentryViewModel.insert(exercise_entry)
         // then clean out the sharedpreference
         pref.edit().clear().commit()
-        Toast.makeText(this,"Entry # ${exercise_entry.id} Saved!", Toast.LENGTH_SHORT).show()
+
+        Toast.makeText(this,"Entry # ${exercise_entry.heartRate} Saved!", Toast.LENGTH_SHORT).show()
      //   val intent= Intent(this, MainActivity::class.java)
      //   startActivity(intent)
         finish()

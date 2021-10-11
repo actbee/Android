@@ -9,6 +9,9 @@ import kotlinx.coroutines.launch
 import java.lang.IllegalArgumentException
 
 class ExerciseEntryViewModel(private val repository: ExerciseEntryRepository): ViewModel() {
+
+    val allExerciseEntryLiveData : LiveData<List<ExerciseEntry>> = repository.allExerciseEntry.asLiveData()
+
     fun insert(exerciseEntry:ExerciseEntry){
         repository.insert(exerciseEntry)
     }
@@ -16,6 +19,16 @@ class ExerciseEntryViewModel(private val repository: ExerciseEntryRepository): V
     fun delete(id: Long){
         repository.delete(id)
     }
+
+    fun getID():Long{
+        val exerciseEntryList = allExerciseEntryLiveData.value
+        if (exerciseEntryList != null && exerciseEntryList.size > 0) {
+            val id = exerciseEntryList[exerciseEntryList.size - 1].id
+            return id
+        }
+        return -1
+    }
+
 }
 
 // view model factory is almost the same as the sample code
