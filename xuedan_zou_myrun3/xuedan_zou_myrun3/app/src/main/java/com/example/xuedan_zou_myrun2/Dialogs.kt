@@ -68,11 +68,21 @@ class Unit_Preference_dialogs: DialogFragment() {
     }
 }
 
+/*
 class Date_Dialogs: DialogFragment(), DatePickerDialog.OnDateSetListener {
     val calendar = Calendar.getInstance()
+    var date:String = "noonnn"
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog{
         val pref : SharedPreferences =requireActivity().getSharedPreferences("start",
             Context.MODE_PRIVATE)
+
+        val dateListener = DatePickerDialog.OnDateSetListener{ _, year, month, day ->
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, day)
+            date = year.toString()+month.toString()+day.toString()
+        }
+
         val datePickerDialog = DatePickerDialog(
             requireContext(), this,
             calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
@@ -83,15 +93,50 @@ class Date_Dialogs: DialogFragment(), DatePickerDialog.OnDateSetListener {
         }
         datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Ok") { _, _ ->
            pref.edit().putString("saved_date",
-                Calendar.MONTH.toString()
-                        +Calendar.DAY_OF_MONTH.toString()+Calendar.YEAR.toString()
+               calendar.get(Calendar.MONTH).toString()
+                        +calendar.get(Calendar.DAY_OF_MONTH).toString()+calendar.get(Calendar.YEAR).toString()
             ).apply()
+           // Toast.makeText(requireActivity(),calendar.get(Calendar.MONTH).toString()
+           //         +calendar.get(Calendar.DAY_OF_MONTH).toString()+calendar.get(Calendar.YEAR).toString(),Toast.LENGTH_SHORT).show()
+
+            Toast.makeText(requireActivity(),date,Toast.LENGTH_SHORT).show()
             dismiss()
         }
         return datePickerDialog
     }
 
     override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
+    }
+}
+
+ */
+
+// modified by TA: LIU
+class Date_Dialogs : DialogFragment(),DatePickerDialog.OnDateSetListener{
+    private lateinit var calendar: Calendar
+    private var date = ""
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        calendar = Calendar.getInstance()
+
+        val dateListener =
+            DatePickerDialog.OnDateSetListener { datePicker, year, month, dayOfMonth ->
+                date = String.format("%d", year) + "-" + String.format(
+                    "%02d",
+                    month + 1
+                ) + "-" + String.format("%02d", dayOfMonth)
+                println(date)
+                Toast.makeText(requireActivity(),date,Toast.LENGTH_SHORT).show()
+            }
+
+        val datePickerDialog = DatePickerDialog(
+            requireActivity(), dateListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
+
+        return datePickerDialog
+    }
+    override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
+        TODO("Not yet implemented")
     }
 }
 
@@ -109,7 +154,7 @@ class MyTimeDialog: DialogFragment(), TimePickerDialog.OnTimeSetListener{
         }
         timePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Ok") { _, _ ->
             pref.edit().putString("saved_time",
-                 Calendar.HOUR_OF_DAY.toString()+":"+Calendar.MINUTE.toString()).apply()
+                 Calendar.HOUR_OF_DAY.toString()+Calendar.MINUTE.toString()).apply()
             dismiss()
         }
         return timePickerDialog
