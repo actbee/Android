@@ -123,8 +123,8 @@ class Date_Dialogs : DialogFragment(),DatePickerDialog.OnDateSetListener{
 
         val dateListener =
             DatePickerDialog.OnDateSetListener { datePicker, year, month, dayOfMonth ->
-                date = String.format("%02d", month + 1) + "-" +
-                        String.format("%02d", dayOfMonth)+ "-" +
+                date = String.format("%02d", month + 1) + " M " +
+                        String.format("%02d", dayOfMonth)+ " " +
                         String.format("%d", year)
                 // println(date)
                 Toast.makeText(requireActivity(),date,Toast.LENGTH_SHORT).show()
@@ -154,8 +154,8 @@ class MyTimeDialog :DialogFragment(), TimePickerDialog.OnTimeSetListener{
         val timeListener =
             TimePickerDialog.OnTimeSetListener { timePicker, hour, miniute ->
                 val second = (0..60).random()
-                time = String.format("%02d", hour) + "-" +
-                        String.format("%02d", miniute ) + "-" +
+                time = String.format("%02d", hour) + ":" +
+                        String.format("%02d", miniute ) + ":" +
                         String.format("%02d", second)
                 //  println(time)
                 Toast.makeText(requireActivity(),time,Toast.LENGTH_SHORT).show()

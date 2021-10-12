@@ -23,7 +23,6 @@ class HistoryAdapter(val context: Context, var ExerciseEntryList: List<ExerciseE
         val my_title = view.findViewById<TextView>(R.id.Title)
         val my_subtitle = view.findViewById<TextView>(R.id.subTitle)
 
-
         //my_title.text = ExerciseEntryList.get(position).id.toString()
         val entry_input:Int = ExerciseEntryList.get(position).inputType
         var input_type:String = ""
@@ -35,20 +34,20 @@ class HistoryAdapter(val context: Context, var ExerciseEntryList: List<ExerciseE
         val entry_activity:Int = ExerciseEntryList.get(position).activityType
         var activity_type:String = ""
         when(entry_activity){
-            0 -> activity_type = "Running,"
-            1 -> activity_type = "Walking,"
-            2 -> activity_type = "Standing,"
-            3 -> activity_type = "Cycling,"
-            4 -> activity_type = "Hiking,"
-            5 -> activity_type = "Downhill skiing,"
-            6 -> activity_type = "Cross-country skiing,"
-            7 -> activity_type = "Snowboarding,"
-            8 -> activity_type = "Skating,"
-            9 -> activity_type = "Swimming,"
-            10 -> activity_type = "Mountain biking,"
-            11 -> activity_type = "Wheelchair,"
-            12 -> activity_type = "Elliptical,"
-            13 -> activity_type = "Other,"
+            0 -> activity_type = "Running, "
+            1 -> activity_type = "Walking, "
+            2 -> activity_type = "Standing, "
+            3 -> activity_type = "Cycling, "
+            4 -> activity_type = "Hiking, "
+            5 -> activity_type = "Downhill skiing, "
+            6 -> activity_type = "Cross-country skiing, "
+            7 -> activity_type = "Snowboarding, "
+            8 -> activity_type = "Skating, "
+            9 -> activity_type = "Swimming, "
+            10 -> activity_type = "Mountain biking, "
+            11 -> activity_type = "Wheelchair, "
+            12 -> activity_type = "Elliptical, "
+            13 -> activity_type = "Other, "
         }
         my_title.text = input_type + activity_type + ExerciseEntryList.get(position).dateTime
 

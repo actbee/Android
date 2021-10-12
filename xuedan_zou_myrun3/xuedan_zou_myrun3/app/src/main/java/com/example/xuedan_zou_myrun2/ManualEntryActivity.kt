@@ -81,17 +81,17 @@ class ManualEntryActivity : AppCompatActivity(){
         var calendar = Calendar.getInstance()
         // if there is no saved date and time before, we should get the current date and time
         if(date == "00-00-0"){
-            date = String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH)) + "-" +
-                   String.format("%02d", calendar.get(Calendar.MONTH)) + "-" +
+            date = String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH)) + "M " +
+                   String.format("%02d", calendar.get(Calendar.MONTH)) + " " +
                     String.format("%d", calendar.get(Calendar.YEAR))
         }
         if(time == "00-00-00"){
-            time = String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY)) + "-" +
-                    String.format("%02d", calendar.get(Calendar.MINUTE)) + "-" +
+            time = String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY)) + ":" +
+                    String.format("%02d", calendar.get(Calendar.MINUTE)) + ":" +
                     String.format("%02d", calendar.get(Calendar.SECOND))
         }
 
-        exercise_entry.dateTime = date+"-"+time
+        exercise_entry.dateTime = time+" "+date
 
         exerciseentryViewModel.insert(exercise_entry)
         // then clean out the sharedpreference
