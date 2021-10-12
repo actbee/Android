@@ -115,17 +115,20 @@ class Date_Dialogs: DialogFragment(), DatePickerDialog.OnDateSetListener {
 class Date_Dialogs : DialogFragment(),DatePickerDialog.OnDateSetListener{
     private lateinit var calendar: Calendar
     private var date = ""
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         calendar = Calendar.getInstance()
+        val pref : SharedPreferences =requireActivity().getSharedPreferences("start",
+            Context.MODE_PRIVATE)
 
         val dateListener =
             DatePickerDialog.OnDateSetListener { datePicker, year, month, dayOfMonth ->
-                date = String.format("%d", year) + "-" + String.format(
-                    "%02d",
-                    month + 1
-                ) + "-" + String.format("%02d", dayOfMonth)
-                println(date)
+                date = String.format("%02d", month + 1) + "-" +
+                        String.format("%02d", dayOfMonth)+ "-" +
+                        String.format("%d", year)
+                // println(date)
                 Toast.makeText(requireActivity(),date,Toast.LENGTH_SHORT).show()
+                pref.edit().putString("saved_date",date).apply()
             }
 
         val datePickerDialog = DatePickerDialog(
@@ -140,6 +143,37 @@ class Date_Dialogs : DialogFragment(),DatePickerDialog.OnDateSetListener{
     }
 }
 
+class MyTimeDialog :DialogFragment(), TimePickerDialog.OnTimeSetListener{
+    private lateinit var calendar: Calendar
+    private var time = ""
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        calendar = Calendar.getInstance()
+        val pref : SharedPreferences =requireActivity().getSharedPreferences("start",
+            Context.MODE_PRIVATE)
+
+        val timeListener =
+            TimePickerDialog.OnTimeSetListener { timePicker, hour, miniute ->
+                val second = (0..60).random()
+                time = String.format("%02d", hour) + "-" +
+                        String.format("%02d", miniute ) + "-" +
+                        String.format("%02d", second)
+                //  println(time)
+                Toast.makeText(requireActivity(),time,Toast.LENGTH_SHORT).show()
+                pref.edit().putString("saved_time",time).apply()
+            }
+
+        val timePickerDialog = TimePickerDialog(
+            requireActivity(), timeListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true
+        )
+
+        return timePickerDialog
+    }
+    override fun onTimeSet(p0: TimePicker?, p1: Int, p2: Int) {
+        TODO("Not yet implemented")
+    }
+}
+
+/*
 class MyTimeDialog: DialogFragment(), TimePickerDialog.OnTimeSetListener{
     val calendar = Calendar.getInstance()
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -163,6 +197,7 @@ class MyTimeDialog: DialogFragment(), TimePickerDialog.OnTimeSetListener{
     override fun onTimeSet(p0: TimePicker?, p1: Int, p2: Int) {
     }
 }
+ */
 
 class Duration_Dialogs: DialogFragment(){
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

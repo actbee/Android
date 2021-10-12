@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import java.time.Duration
+import java.util.*
 
 class ManualEntryActivity : AppCompatActivity(){
     private val INPUT_PROPERTY = arrayOf(
@@ -69,11 +70,28 @@ class ManualEntryActivity : AppCompatActivity(){
         val exercise_entry = ExerciseEntry()
         exercise_entry.activityType = pref.getInt("saved_activitytype", 0)
         exercise_entry.inputType = pref.getInt("saved_inputtype", 0)
-        exercise_entry.dateTime = pref.getString("saved_time", "0") + pref.getString("saved_date","0")
         exercise_entry.duration = pref.getInt("saved_duration", 0)
         exercise_entry.distance = pref.getFloat("saved_distance", 0F)
         exercise_entry.calorie = pref.getFloat("saved_calorie", 0F)
         exercise_entry.heartRate = pref.getInt("saved_heartrate", 0)
+
+        var date = pref.getString("saved_date", "00-00-0")
+        var time  = pref.getString("saved_time","00-00-00")
+
+        var calendar = Calendar.getInstance()
+        // if there is no saved date and time before, we should get the current date and time
+        if(date == "00-00-0"){
+            date = String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH)) + "-" +
+                   String.format("%02d", calendar.get(Calendar.MONTH)) + "-" +
+                    String.format("%d", calendar.get(Calendar.YEAR))
+        }
+        if(time == "00-00-00"){
+            time = String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY)) + "-" +
+                    String.format("%02d", calendar.get(Calendar.MINUTE)) + "-" +
+                    String.format("%02d", calendar.get(Calendar.SECOND))
+        }
+
+        exercise_entry.dateTime = date+"-"+time
 
         exerciseentryViewModel.insert(exercise_entry)
         // then clean out the sharedpreference

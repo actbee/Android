@@ -50,7 +50,7 @@ class HistoryAdapter(val context: Context, var ExerciseEntryList: List<ExerciseE
             12 -> activity_type = "Elliptical,"
             13 -> activity_type = "Other,"
         }
-        my_title.text = input_type + activity_type
+        my_title.text = input_type + activity_type + ExerciseEntryList.get(position).dateTime
 
         // need to modify our way to show the distance according to the saved_unit
         val pref: SharedPreferences = context.getSharedPreferences(
