@@ -10,6 +10,8 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +34,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
     private lateinit var  polylines: ArrayList<Polyline>
     private lateinit var  now_marker: Marker
     private lateinit var  type: String
+    private var delete: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +58,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
             0 ->{
                 val map_fragment = supportFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment
                 map_fragment.getMapAsync(this)
+            }
+            else ->{
+                delete = true
             }
         }
 
@@ -156,4 +162,24 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
         if (location_manager != null)
             location_manager.removeUpdates(this)
     }
+
+    // add the delte bottom to the actionbar
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+      if(delete == true) {
+          getMenuInflater().inflate(R.menu.delete, menu)
+      }
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        var id:Int = item.getItemId()
+        if (id == R.id.history_delete_button){
+
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+
+
 }
