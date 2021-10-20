@@ -22,4 +22,10 @@ class ExerciseEntryRepository(private val exerciseEntryDatabaseDao: ExerciseEntr
             exerciseEntryDatabaseDao.delete_value(id)
         }
     }
+
+    fun select(id: Long){
+        CoroutineScope(IO).launch{
+            exerciseEntryDatabaseDao.select_value(id)
+        }
+    }
 }

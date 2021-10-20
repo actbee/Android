@@ -1,6 +1,7 @@
 package com.example.xuedan_zou_myrun2
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -17,6 +18,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 
@@ -34,7 +36,16 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
     private lateinit var  polylines: ArrayList<Polyline>
     private lateinit var  now_marker: Marker
     private lateinit var  type: String
+    private lateinit var app_context: Context
+    private lateinit var service_intent:Intent
     private var delete: Boolean = false
+    private lateinit var exerciseentryViewModel: ExerciseEntryViewModel
+    private lateinit var viewModelFactory: ExerciseEntryViewModelFactory
+    private lateinit var map_ViewModel: mapViewModel
+    private lateinit var database: ExerciseEntryDatabase
+    private lateinit var repository: ExerciseEntryRepository
+    private lateinit var databaseDao: ExerciseEntryDatabaseDao
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +54,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
         val intent: Intent = getIntent()
         val activity_type = intent.getStringExtra("activity_type")
         val input_type = intent.getStringExtra("input_type")
+        // to set the input activity type
         when(input_type){
             "GPS" -> {
                 type = activity_type!!
@@ -56,10 +68,24 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
         // decide if it needs to update the input or read the history from the database
         when(id){
             0 ->{
-                val map_fragment = supportFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment
+                app_context = this.applicationContext
+                // open the service
+                service_intent = Intent(this, MapService::class.java)
+                startService(service_intent)
+           //     app_context.bindService(service_intent, map_ViewModel, Context.BIND_AUTO_CREATE)
+              //  map_ViewModel = ViewModelProvider(this).get(mapViewModel::class.java)
+
+                var map_fragment = supportFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment
                 map_fragment.getMapAsync(this)
             }
             else ->{
+                database = ExerciseEntryDatabase.getInstance(this)
+                databaseDao = database.exerciseEntryDatabaseDao
+                repository = ExerciseEntryRepository(databaseDao)
+                viewModelFactory = ExerciseEntryViewModelFactory(repository)
+                exerciseentryViewModel = ViewModelProvider(this,
+                    viewModelFactory).get(ExerciseEntryViewModel::class.java)
+
                 delete = true
             }
         }
@@ -159,8 +185,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
 
     override fun onDestroy() {
         super.onDestroy()
-        if (location_manager != null)
+    //  app_context.unbindService()
+        stopService(service_intent)
+
+        if (location_manager != null) {
             location_manager.removeUpdates(this)
+        }
     }
 
     // add the delte bottom to the actionbar

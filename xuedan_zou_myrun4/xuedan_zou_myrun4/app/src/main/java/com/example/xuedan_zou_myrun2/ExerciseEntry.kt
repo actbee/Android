@@ -3,6 +3,8 @@ package com.example.xuedan_zou_myrun2
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.android.gms.common.util.ArrayUtils.newArrayList
+import com.google.android.gms.maps.model.LatLng
 
 @Entity(tableName = "exercise_entry_table")
 data class ExerciseEntry(
@@ -40,5 +42,8 @@ data class ExerciseEntry(
     var heartRate:Int = 0,
 
     @ColumnInfo(name = "comment")
-    var comment:String = ""
+    var comment:String = "",
+
+    @ColumnInfo(name = "locationlist")
+    var locationlist: String = ""
 )

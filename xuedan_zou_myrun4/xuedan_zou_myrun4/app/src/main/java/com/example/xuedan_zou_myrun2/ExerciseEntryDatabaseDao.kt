@@ -18,4 +18,7 @@ interface ExerciseEntryDatabaseDao {
     @Query("DELETE FROM exercise_entry_table WHERE id = :key")
     suspend fun delete_value(key: Long)
 
+    @Query("SELECT * FROM exercise_entry_table WHERE id = :key")
+    fun select_value(key: Long): Flow<ExerciseEntry>
+
 }

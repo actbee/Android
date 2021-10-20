@@ -20,6 +20,9 @@ class ExerciseEntryViewModel(private val repository: ExerciseEntryRepository): V
         repository.delete(id)
     }
 
+    fun select(id: Long){
+        repository.select(id)
+    }
     /*
     // try to get the id of the last database but seems no use
     fun getID():Long{

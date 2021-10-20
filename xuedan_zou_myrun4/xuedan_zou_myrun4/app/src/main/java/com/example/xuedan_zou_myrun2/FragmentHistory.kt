@@ -54,17 +54,23 @@ class FragmentHistory:Fragment(){
             // get the ExerciseEntry we get
             val item:ExerciseEntry = history_listview.getItemAtPosition(position) as ExerciseEntry
            //  Toast.makeText(requireActivity(),item.toString(), Toast.LENGTH_SHORT).show()
+            when(item.inputType){
+                0 ->{
+                    val intent = Intent(requireActivity(), DisplayEntryActivity::class.java)
+                    intent.putExtra("id", item.id)
+                    intent.putExtra("input_type", item.inputType)
+                    intent.putExtra("activity_type", item.activityType)
+                    intent.putExtra("date_and_time", item.dateTime)
+                    intent.putExtra("duration", item.duration)
+                    intent.putExtra("distance", item.distance)
+                    intent.putExtra("calorie", item.calorie)
+                    intent.putExtra("heart_rate", item.heartRate)
+                    startActivity(intent)
+                }
+                else ->{
 
-            val intent =Intent(requireActivity(), DisplayEntryActivity::class.java)
-            intent.putExtra("id", item.id)
-            intent.putExtra("input_type", item.inputType)
-            intent.putExtra("activity_type", item.activityType)
-            intent.putExtra("date_and_time", item.dateTime)
-            intent.putExtra("duration", item.duration)
-            intent.putExtra("distance", item.distance)
-            intent.putExtra("calorie", item.calorie)
-            intent.putExtra("heart_rate", item.heartRate)
-            startActivity(intent)
+                }
+            }
         }
 
         return view
