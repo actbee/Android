@@ -57,6 +57,8 @@
             android:name=".DisplayEntryActivity"
             android:label="@string/app_name" />
 
+        <service android:name=".MapService"/>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.xuedan_zou_myrun2"

@@ -31,12 +31,33 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
     private lateinit var  polylines_options: PolylineOptions
     private lateinit var  polylines: ArrayList<Polyline>
     private lateinit var  now_marker: Marker
+    private lateinit var  type: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.map_layout)
-        val map_fragment = supportFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment
-        map_fragment.getMapAsync(this)
+
+        val intent: Intent = getIntent()
+        val activity_type = intent.getStringExtra("activity_type")
+        val input_type = intent.getStringExtra("input_type")
+        when(input_type){
+            "GPS" -> {
+                type = activity_type!!
+            }
+            "Automatic" -> {
+                type = "Unknown"
+            }
+        }
+
+        var id: Int = intent.getIntExtra("map_id", 0)
+        // decide if it needs to update the input or read the history from the database
+        when(id){
+            0 ->{
+                val map_fragment = supportFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment
+                map_fragment.getMapAsync(this)
+            }
+        }
+
     }
 
 
@@ -63,7 +84,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
                 onLocationChanged(location)
             }
             // update the location and call onLocationChanged every 1 second
-            location_manager.requestLocationUpdates(provider, 15, 0f, this)
+            location_manager.requestLocationUpdates(provider, 10, 0f, this)
 
         } catch (e: SecurityException) {
         }
@@ -75,7 +96,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
         val pos = LatLng(lat, lng)
         // update our map
         if (!map_centered) {
-            val change_camera = CameraUpdateFactory.newLatLngZoom(pos, 10f)
+            val change_camera = CameraUpdateFactory.newLatLngZoom(pos, 15f)
             my_map.animateCamera(change_camera)
             map_centered = true
 
@@ -96,7 +117,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
         polylines_options.add(pos)
         polylines.add(my_map.addPolyline(polylines_options))
         val message = findViewById<EditText>(R.id.type_stats)
-        message.setText(lat.toString()+" , "+lng.toString())
+        message.setText(
+            "Type: " + type + "\n" +
+            lat.toString()+" , "+lng.toString())
     }
 
     fun check_permission() {

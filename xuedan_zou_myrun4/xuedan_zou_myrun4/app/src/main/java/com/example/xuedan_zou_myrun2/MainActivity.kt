@@ -84,12 +84,6 @@ class MainActivity : AppCompatActivity() {
 
     fun StartClicked(view:View?){
        val myinput_spinner:Spinner=findViewById(R.id.input_entry)
-        val state=myinput_spinner.selectedItem.toString()
-        when(state){
-            "Manual Entry"-> startActivity(Intent(this, ManualEntryActivity::class.java))
-            else-> startActivity(Intent(this, MapActivity::class.java))
-        }
-
         // save the necessary data
         val pref1 : SharedPreferences =this.getSharedPreferences("start",
             Context.MODE_PRIVATE)
@@ -104,7 +98,19 @@ class MainActivity : AppCompatActivity() {
         // skating 8, swimming 9, mountain biking 10, wheelchair 11,
         // elliptical 12, other 13
         pref2.edit().putInt("saved_activitytype",
-             myactivity_spinner.selectedItemPosition).apply()
+            myactivity_spinner.selectedItemPosition).apply()
+
+        val state=myinput_spinner.selectedItem.toString()
+        when(state){
+            "Manual Entry"-> startActivity(Intent(this, ManualEntryActivity::class.java))
+            else-> {
+                // pass the input type and activity type to the new activitiy
+                var intent:Intent = Intent(this, MapActivity::class.java)
+                intent.putExtra("activity_type", myactivity_spinner.selectedItem.toString())
+                intent.putExtra("input_type", state)
+                startActivity(intent)
+            }
+        }
     }
 
     fun SYNCClicked(view:View?){
