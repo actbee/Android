@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Account Preferences">
+
+        <Preference
+            android:key="user_profile"
+            android:summary="User Profile"
+            android:title="Names,Emails,Class,etc">
+
+            <intent android:action="android.intent.action.VIEW"
+                android:targetPackage="com.example.xuedan_zou_myrun2"
+                android:targetClass="com.example.xuedan_zou_myrun2.ProfileActivity"/>
+
+        </Preference>
+        <CheckBoxPreference
+            android:key="checkbox"
+            android:summary="Posting your records anonymously"
+            android:title="Privacy Setting" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Additional Settings">
+        <Preference
+            android:key="unit_preference"
+            android:summary="Select the units"
+            android:title="Unit Preference">
+
+            <intent android:action="android.intent.action.VIEW"
+                android:targetPackage="com.example.xuedan_zou_myrun2"
+                android:targetClass="com.example.xuedan_zou_myrun2.UnitDialog"/>
+
+        </Preference>
+
+        <Preference
+            android:key="comments"
+            android:summary="Please enter your comments"
+            android:title="Comments">
+
+            <intent android:action="android.intent.action.VIEW"
+                android:targetPackage="com.example.xuedan_zou_myrun2"
+                android:targetClass="com.example.xuedan_zou_myrun2.CommentDialog"/>
+
+        </Preference>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Misc.">
+        <Preference
+            android:layout_width="match_parent"
+            android:key="webpage"
+            android:summary="http://web.cs.dartmouth.edu/"
+            android:title="Webpage">
+
+            <intent android:action="android.intent.action.VIEW"
+                android:data="http://web.cs.dartmouth.edu/" />
+
+        </Preference>
+    </PreferenceCategory>
+
+</PreferenceScreen>
