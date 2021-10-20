@@ -55,6 +55,7 @@ class Unit_Preference_dialogs: DialogFragment() {
         rg.setOnCheckedChangeListener { _, which ->
             pref.edit().putInt("unit", which).apply()
             val radio:RadioButton = view.findViewById(which)
+            /*
             when(which) {
                 R.id.metric -> {
                     //pref.edit().putInt("unit", 0).apply()
@@ -65,7 +66,7 @@ class Unit_Preference_dialogs: DialogFragment() {
                     Toast.makeText(requireActivity(), "get M!", Toast.LENGTH_SHORT).show()
                 }
             }
-            Toast.makeText(requireActivity(),"get!"+ pref.getInt("unit", 0).toString(), Toast.LENGTH_SHORT).show()
+             */
         }
 
         val builder = AlertDialog.Builder(requireContext())

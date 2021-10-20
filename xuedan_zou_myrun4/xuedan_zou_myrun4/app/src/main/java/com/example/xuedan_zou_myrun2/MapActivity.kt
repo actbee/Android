@@ -11,74 +11,44 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ListView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.*
 
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
+import java.util.ArrayList
 
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
 
-    private lateinit var mMap: GoogleMap
+    private lateinit var my_map: GoogleMap
+    private val PERMISSION_REQUEST_CODE = 0
     private lateinit var location_manager: LocationManager
-    private var mapCentered = false
-    private  var PERMISSION_REQUEST_CODE = 0
-    private lateinit var polylines_options: PolylineOptions
-    private lateinit var polylines: ArrayList<Polyline>
-    private lateinit var marker_options: MarkerOptions
+    private var map_centered = false
+    private lateinit var  marker_options: MarkerOptions
+    private lateinit var  polylines_options: PolylineOptions
+    private lateinit var  polylines: ArrayList<Polyline>
+    private lateinit var  now_marker: Marker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.map_layout)
-     //  val frag = supportFragmentManager.findFragmentById(R.id.fragment_map) as MapFragment
-    //   frag.getMapAsync(this)
+        val map_fragment = supportFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment
+        map_fragment.getMapAsync(this)
     }
 
-
-    override fun onStart() {
-        super.onStart()
-        /*
-        val frag = supportFragmentManager.findFragmentById(R.id.fragment_map)
-        if (frag != null) {
-            val mapFragment: SupportMapFragment = frag as SupportMapFragment
-            mapFragment.getMapAsync(this)
-        }
-         */
-    }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+        my_map = googleMap
+        my_map.mapType = GoogleMap.MAP_TYPE_NORMAL
         polylines_options = PolylineOptions()
         polylines_options.color(Color.BLACK)
         polylines = ArrayList()
-        init_LocationManager()
-        /*
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
-         */
+        marker_options = MarkerOptions()
 
-        checkPermisiion()
-    }
-
-    fun checkPermisiion(){
-        if(Build.VERSION.SDK_INT < 23){
-            return
-        }
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSION_REQUEST_CODE)
-        else
-            init_LocationManager()
+        check_permission()
     }
 
     fun init_LocationManager() {
@@ -86,13 +56,15 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
             location_manager = getSystemService(LOCATION_SERVICE) as LocationManager
             val criteria = Criteria()
             criteria.accuracy = Criteria.ACCURACY_FINE
-
             val provider = location_manager.getBestProvider(criteria, true)
+            // get the last time's location
             val location = location_manager.getLastKnownLocation(provider!!)
-
-            if(location != null)
+            if(location != null) {
                 onLocationChanged(location)
-            location_manager.requestLocationUpdates(provider, 0, 0f, this)
+            }
+            // update the location and call onLocationChanged every 1 second
+            location_manager.requestLocationUpdates(provider, 15, 0f, this)
+
         } catch (e: SecurityException) {
         }
     }
@@ -100,15 +72,60 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
     override fun onLocationChanged(location: Location) {
         val lat = location.latitude
         val lng = location.longitude
-        val position_latlng = LatLng(lat, lng)
-        if (!mapCentered) {
-            val cameraUpdate = CameraUpdateFactory.newLatLngZoom(position_latlng, 17f)
-            mMap.animateCamera(cameraUpdate)
-            marker_options.position(position_latlng)
-            mMap.addMarker(marker_options)
-            polylines_options.add(position_latlng)
-            mapCentered = true
+        val pos = LatLng(lat, lng)
+        // update our map
+        if (!map_centered) {
+            val change_camera = CameraUpdateFactory.newLatLngZoom(pos, 10f)
+            my_map.animateCamera(change_camera)
+            map_centered = true
+
+            marker_options.position(pos)
+            // mark our first point
+            var first_marker_options = MarkerOptions()
+            first_marker_options.position(pos)
+            first_marker_options.icon(BitmapDescriptorFactory.defaultMarker
+                (BitmapDescriptorFactory.HUE_CYAN))
+            my_map.addMarker(first_marker_options)
+            now_marker = my_map.addMarker(marker_options)
+            polylines_options.add(pos)
         }
+
+        marker_options.position(pos)
+        now_marker.remove()
+        now_marker = my_map.addMarker(marker_options)
+        polylines_options.add(pos)
+        polylines.add(my_map.addPolyline(polylines_options))
+        val message = findViewById<EditText>(R.id.type_stats)
+        message.setText(lat.toString()+" , "+lng.toString())
+    }
+
+    fun check_permission() {
+        if (Build.VERSION.SDK_INT < 23) return
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSION_REQUEST_CODE)
+        else {
+            init_LocationManager()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                init_LocationManager()
+            }
+        }
+    }
+
+    override fun onProviderDisabled(provider: String) {}
+    override fun onProviderEnabled(provider: String) {}
+
+    fun MapSaveClicked(view:View?){
+
+    }
+
+    fun MapCancelClicked(view: View?){
+        finish()
     }
 
     override fun onDestroy() {
@@ -116,14 +133,4 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
         if (location_manager != null)
             location_manager.removeUpdates(this)
     }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) init_LocationManager()
-        }
-    }
-    override fun onProviderDisabled(provider: String) {}
-    override fun onProviderEnabled(provider: String) {}
-
 }
