@@ -44,6 +44,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var database: ExerciseEntryDatabase
     private lateinit var repository: ExerciseEntryRepository
     private lateinit var databaseDao: ExerciseEntryDatabaseDao
+    private lateinit var updated_data:MapEntry
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,10 +68,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         startService(service_intent)
         map_ViewModel = ViewModelProvider(this).get(mapViewModel::class.java)
         applicationContext.bindService(service_intent, map_ViewModel, Context.BIND_AUTO_CREATE)
-        map_ViewModel.position.observe(this, { it ->
-           // val updated_data:MapEntry = it
-           // val posget:String = updated_data.location
-            val posget:String = it
+        map_ViewModel.data.observe(this, { it ->
+           updated_data = it
+           val posget:String = updated_data.location
+           // val posget:String = it
             val data = posget.split(",")
             val lat = data[0].toDouble()
             val lng = data[1].toDouble()
@@ -117,7 +118,14 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         polylines_options.add(pos)
         polylines.add(my_map.addPolyline(polylines_options))
         val message = findViewById<EditText>(R.id.type_stats)
-        val s = "Type: $type\n$lat , $lng"
+        //val s = "Type: $type\n$lat , $lng"
+        val s ="Type: $type\n" +
+                "Avg speed: ${updated_data.avgspeed} m/h\n" +
+                "Cur speed: ${updated_data.speed} m/h\n" +
+                "Climb: ${updated_data.altitude} Miles\n" +
+                "Calorie: ${updated_data.calorie}\n" +
+                "Distance: ${updated_data.distance} Miles"
+
         message.setText(s)
     }
 
