@@ -27,7 +27,6 @@ import java.util.*
 class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var my_map: GoogleMap
-    private val PERMISSION_REQUEST_CODE = 0
     private var map_centered = false
     private lateinit var marker_options: MarkerOptions
     private lateinit var polylines_options: PolylineOptions
@@ -44,7 +43,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var repository: ExerciseEntryRepository
     private lateinit var databaseDao: ExerciseEntryDatabaseDao
     private lateinit var updated_data:MapEntry
-    private var activity_id: Int = 0
+    private val PERMISSION_REQUEST_CODE = 0
+    private var activity_type: Int = 0
     private var locationlist: String = ""
     private var input_type: String = ""
     private var get_id: Long = -1L
@@ -60,32 +60,72 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         exerciseentryViewModel = ViewModelProvider(this,
             viewModelFactory).get(ExerciseEntryViewModel::class.java)
 
+        val map_fragment = supportFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment
+        map_fragment.getMapAsync(this)
+
+    }
+    override fun onResume() {
+           super.onResume()
+
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+
+        my_map = googleMap
+        my_map.mapType = GoogleMap.MAP_TYPE_NORMAL
+        polylines_options = PolylineOptions()
+        polylines_options.color(Color.BLACK)
+        polylines = ArrayList()
+        marker_options = MarkerOptions()
+        check_permission()
+
         val intent: Intent = intent
-        val activity_type = intent.getStringExtra("activity_type")
-        activity_id = intent.getIntExtra("activity_id", 0)
+        //val activity_type = intent.getStringExtra("activity_type")
+        activity_type = intent.getIntExtra("activity_type", 0)
         input_type = intent.getStringExtra("input_type")!!
         // to set the input activity type
-        when(input_type){
+        when (input_type) {
             "GPS" -> {
-                type = activity_type!!
+                when (activity_type) {
+                    0 -> type = "Running, "
+                    1 -> type = "Walking, "
+                    2 -> type = "Standing, "
+                    3 -> type = "Cycling, "
+                    4 -> type = "Hiking, "
+                    5 -> type = "Downhill skiing, "
+                    6 -> type = "Cross-country skiing, "
+                    7 -> type = "Snowboarding, "
+                    8 -> type = "Skating, "
+                    9 -> type = "Swimming, "
+                    10 -> type = "Mountain biking, "
+                    11 -> type = "Wheelchair, "
+                    12 -> type = "Elliptical, "
+                    13 -> type = "Other, "
+                }
             }
             "Automatic" -> {
                 type = "Unknown"
             }
         }
-        val map_fragment = supportFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment
-        map_fragment.getMapAsync(this)
 
+        map_ViewModel = ViewModelProvider(this).get(mapViewModel::class.java)
+
+        val bundle = intent.getExtras()!!
         get_id = intent.getLongExtra("map_id", -1L)
-        when(get_id){
-            -1L ->{
+        // get_id =bundle.getLong("id", -1L)
+
+        when (get_id) {
+            -1L -> {
                 service_intent = Intent(this, MapService::class.java)
                 startService(service_intent)
-                map_ViewModel = ViewModelProvider(this).get(mapViewModel::class.java)
-                applicationContext.bindService(service_intent, map_ViewModel, Context.BIND_AUTO_CREATE)
+                applicationContext.bindService(
+                    service_intent,
+                    map_ViewModel,
+                    Context.BIND_AUTO_CREATE
+                )
                 map_ViewModel.data.observe(this, { it ->
                     updated_data = it
-                    val posget:String = updated_data.location
+                    val posget: String = updated_data.location
                     // val posget:String = it
                     locationlist = locationlist + posget + ","
                     val data = posget.split(",")
@@ -93,9 +133,59 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                     val lng = data[1].toDouble()
                     val pos = LatLng(lat, lng)
                     Location_Changed(pos)
-                } )
+
+                    val message = findViewById<EditText>(R.id.type_stats)
+                    //val s = "Type: $type\n$lat , $lng"
+
+                    val s ="Type: $type\n" +
+                            "Avg speed: "+ String.format("%.2f",updated_data.avgspeed).toString() + "km/h\n"+
+                            "Cur speed: "+ String.format("%.2f",updated_data.speed).toString() + "km/h\n" +
+                            "Climb: " + String.format("%.2f",updated_data.altitude).toString() +"Kilometers\n" +
+                            "Calorie: ${updated_data.calorie.toInt()} \n" +
+                            "Distance: " + String.format("%.2f", updated_data.distance).toString() + "Kilometers"
+
+                    /*
+                    val s ="Type: $type\n" +
+                            "Avg speed: ${updated_data.avgspeed} m/h\n" +
+                            "Cur speed: ${updated_data.speed} m/h\n" +
+                            "Climb: ${updated_data.altitude} Miles\n" +
+                            "Calorie: ${updated_data.calorie}\n" +
+                            "Distance: ${updated_data.distance} Miles"
+
+                     */
+                    message.setText(s)
+
+                })
             }
-            else ->{
+            // we need to read our datas from the database
+            else -> {
+                locationlist = bundle.getString("location")!!
+                val avgspeed = bundle.getFloat("avgspeed", 0F)
+                val distance = bundle.getFloat("distance", 0F)
+                val calorie = bundle.getFloat("calorie", 0F)
+                val altitude = bundle.getFloat("altitude", 0F)
+                // seperate our locationlist
+                val locations = locationlist.split(",")
+                val end:Int = locations.size - 2
+
+                for (i: Int in 0..end step 2) {
+                    var lat = locations[i].toDouble()
+                    var lng = locations[i + 1].toDouble()
+                    var pos = LatLng(lat, lng)
+                    Location_Changed(pos)
+                }
+                val message = findViewById<EditText>(R.id.type_stats)
+                //val s = "Type: $type\n$lat , $lng"
+
+                val s ="Type: $type\n" +
+                        "Avg speed: "+ String.format("%.2f",avgspeed).toString() + "km/h\n"+
+                        "Cur speed: n/a\n" +
+                        "Climb: " + String.format("%.2f",altitude).toString() +"Kilometers\n" +
+                        "Calorie: ${calorie.toInt()} \n" +
+                        "Distance: " + String.format("%.2f",distance) + "Kilometers\n"
+
+                message.setText(s)
+
 
                 val buttonsaved = findViewById<Button>(R.id.map_save_button)
                 val buttoncancel = findViewById<Button>(R.id.map_cancel_button)
@@ -107,24 +197,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        check_permission()
-        my_map = googleMap
-        my_map.mapType = GoogleMap.MAP_TYPE_NORMAL
-        my_map
-        polylines_options = PolylineOptions()
-        polylines_options.color(Color.BLACK)
-        polylines = ArrayList()
-        marker_options = MarkerOptions()
-    }
-
     fun Location_Changed(inpos:LatLng) {
         val pos = inpos
         val lat = inpos.latitude
         val lng = inpos.longitude
         // update our map
         if (!map_centered) {
-            val change_camera = CameraUpdateFactory.newLatLngZoom(pos, 15f)
+            val change_camera = CameraUpdateFactory.newLatLngZoom(pos, 18f)
             my_map.animateCamera(change_camera)
             map_centered = true
 
@@ -144,36 +223,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         now_marker = my_map.addMarker(marker_options)
         polylines_options.add(pos)
         polylines.add(my_map.addPolyline(polylines_options))
-        val message = findViewById<EditText>(R.id.type_stats)
-        //val s = "Type: $type\n$lat , $lng"
-
-        val s ="Type: $type\n" +
-                "Avg speed: "+ String.format("%.2f",updated_data.avgspeed).toString() + "km/h\n"+
-                "Cur speed: "+ String.format("%.2f",updated_data.speed).toString() + "km/h\n" +
-                "Climb: " + String.format("%.2f",updated_data.altitude).toString() +"Kilometers\n" +
-                "Calorie: ${updated_data.calorie.toInt()} \n" +
-                "Distance: " + String.format("%.2f", updated_data.distance).toString() + "Kilometers\n" +
-                "Time: ${updated_data.time}"
-
-        /*
-        val s ="Type: $type\n" +
-                "Avg speed: ${updated_data.avgspeed} m/h\n" +
-                "Cur speed: ${updated_data.speed} m/h\n" +
-                "Climb: ${updated_data.altitude} Miles\n" +
-                "Calorie: ${updated_data.calorie}\n" +
-                "Distance: ${updated_data.distance} Miles"
-
-         */
-        message.setText(s)
-
 
     }
 
-    fun check_permission() {
-        if (Build.VERSION.SDK_INT < 23) return
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSION_REQUEST_CODE)
-    }
 
     fun MapSaveClicked(view:View?){
         val exercise_entry = ExerciseEntry()
@@ -185,7 +237,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 exercise_entry.inputType = 2
             }
         }
-        exercise_entry.activityType = activity_id
+        exercise_entry.activityType = activity_type
         exercise_entry.duration = updated_data.time.toInt()
         exercise_entry.distance = updated_data.distance
         exercise_entry.calorie = updated_data.calorie
@@ -214,8 +266,23 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onDestroy() {
         super.onDestroy()
-        applicationContext.unbindService(map_ViewModel)
-        stopService(service_intent)
+        // only when we open the serivice, that is ,when we can not delete
+        if(delete == false) {
+            applicationContext.unbindService(map_ViewModel)
+            stopService(service_intent)
+        }
+    }
+
+    fun check_permission(): Boolean {
+        if (Build.VERSION.SDK_INT < 23){
+            return false
+        }
+       while(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+           PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSION_REQUEST_CODE)
+        }
+        return true
     }
 
 

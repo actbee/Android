@@ -145,7 +145,7 @@ import com.google.android.gms.maps.model.*
                 val temphandler = message_handler
                 if (temphandler != null) {
                     val bundle = Bundle()
-                    speed = location_now_L.getSpeed() * 5
+                    speed = location_now_L.getSpeed() * 5F
 
                     val altitude = ((location_now_L.getAltitude() - startaltitude) * 0.01).toFloat()
                     val time = (System.nanoTime() - starttime) * 0.000000001F
@@ -172,8 +172,6 @@ import com.google.android.gms.maps.model.*
                     bundle.putFloat("distance", distance)
                     bundle.putFloat("calorie", calorie)
                     bundle.putFloat("altitude",altitude)
-
-
 
                     //bundle.putParcelable("new datas", map_entry)
                     //bundle.put

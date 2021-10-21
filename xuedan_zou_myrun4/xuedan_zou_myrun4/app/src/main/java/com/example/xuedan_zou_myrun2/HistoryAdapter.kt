@@ -64,14 +64,11 @@ class HistoryAdapter(val context: Context, var ExerciseEntryList: List<ExerciseE
                         ExerciseEntryList.get(position).duration.toString()+"secs"
 
             }
-                R.id.imperial ->{
+                else ->{
                     var transfer = ExerciseEntryList.get(position).distance * 0.621371F
                     my_subtitle.text = transfer.toString()+" Miles, "+
                             ExerciseEntryList.get(position).duration.toString()+"secs"
                 }
-               else ->{
-                   my_subtitle.text ="${unit}"
-               }
         }
         return view
     }

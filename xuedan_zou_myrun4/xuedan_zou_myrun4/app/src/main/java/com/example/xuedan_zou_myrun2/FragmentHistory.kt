@@ -68,7 +68,23 @@ class FragmentHistory:Fragment(){
                     startActivity(intent)
                 }
                 else ->{
+                    val intent = Intent(requireActivity(), MapActivity::class.java)
+                    var bundle: Bundle = Bundle()
+                    bundle.putString("location", item.locationlist)
+                    bundle.putFloat("avgspeed",item.avgSpeed)
+                    bundle.putFloat("distance", item.distance)
+                    bundle.putFloat("calorie", item.calorie)
+                    bundle.putFloat("altitude",item.climb)
+                    bundle.putLong("map_id", item.id)
+                    intent.putExtras(bundle)
 
+                    intent.putExtra("activity_type", item.activityType)
+                    when(item.inputType){
+                        1 -> intent.putExtra("input_type", "GPS")
+                        2 -> intent.putExtra("input_type", "Automatic")
+                    }
+                    intent.putExtra("id", item.id)
+                    startActivity(intent)
                 }
             }
         }
