@@ -10,28 +10,31 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-abstract class mapViewModel: ViewModel(), ServiceConnection {
-    private lateinit var my_MessageHandler: MyMessageHandler
-    init {
-        my_MessageHandler = MyMessageHandler(Looper.getMainLooper())
-    }
+class mapViewModel: ViewModel(), ServiceConnection {
+    private var my_MessageHandler: MyMessageHandler = MyMessageHandler(Looper.getMainLooper())
+
     // MutableLiveData means you can change its value
-    private val position = MutableLiveData<Int>()
-    //val counter: LiveData<Int>
-        get() = position
+     private val positions = MutableLiveData<String>()
+     val position: LiveData<String>
+        get() = positions
 
 
     override fun onServiceConnected(name: ComponentName, iBinder: IBinder) {
-        val temp_binder = iBinder as MapService.MyBinder
+        val temp_binder = iBinder as MapService.My_Binder
         temp_binder.set_msg_handler(my_MessageHandler)
+    }
+
+    override fun onServiceDisconnected(p0: ComponentName?) {
+        println("disconnected")
     }
 
 
     inner class MyMessageHandler(looper: Looper) : Handler(looper) {
         override fun handleMessage(message: Message) {
-            if (message.what == MapService.MSG_INT_VALUE) {
+            if (message.what == 0) {
                 val bundle = message.data
-                position.value = bundle.getInt(MapService.INT_KEY)
+                positions.value = bundle.getString("new_location")
+
             }
         }
     }

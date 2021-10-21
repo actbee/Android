@@ -25,34 +25,39 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
-
-class MapService : Service(){
+ class MapService : Service(),LocationListener{
     private lateinit var notification_manager: NotificationManager
     val NOTIFICATION_ID = 777
-    private lateinit var  myBinder: MyBinder
+    private lateinit var  myBinder: My_Binder
     private val CHANNEL_ID = "notification channel"
+    private lateinit var location_manager: LocationManager
 
     private var message_handler: Handler? = null
-    companion object{
-        val INT_KEY = "int key"
-        val MSG_INT_VALUE = 0
-    }
+
     //private var counter = 0
     private lateinit var my_task: MyTask
     private lateinit var timer: Timer
+    // used to calculate the distance
+    private lateinit var first_location: Location
+    private lateinit var location_now_L: Location
+    private lateinit var locationl_now: String
 
     override fun onCreate() {
         super.onCreate()
+        locationl_now = "0,0"
         my_task = MyTask()
-        //timer = Timer()
-        //timer.scheduleAtFixedRate(my_task, 0, 1000L)
+        // control the update rate
+        timer = Timer()
+        timer.scheduleAtFixedRate(my_task, 0, 1000L)
         // put the icon on the bar
         showNotification()
-        //ymyBinder = MyBinder()
+        myBinder = My_Binder()
         message_handler = null
+        init_LocationManager()
     }
 
     // calls everytime startService() is called
@@ -60,17 +65,17 @@ class MapService : Service(){
         return START_NOT_STICKY
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return myBinder
-    }
-
-    inner class MyBinder : Binder() {
+    inner class My_Binder : Binder() {
         fun set_msg_handler(message_handler: Handler) {
             this@MapService.message_handler = message_handler
         }
     }
 
-    override fun onUnbind(intent: Intent?): Boolean {
+     override fun onBind(intent: Intent?): IBinder? {
+         return myBinder
+     }
+
+     override fun onUnbind(intent: Intent?): Boolean {
         message_handler = null
         return true
     }
@@ -128,30 +133,54 @@ class MapService : Service(){
 
     inner class MyTask : TimerTask() {
         override fun run() {
-
-
-           /* try {
-
-                counter += 1
-                println("debug: counter: $counter")
-
-                val tempHamdler = message_handler //see the reason why we need a local val in this situation https://stackoverflow.com/questions/44595529/smart-cast-to-type-is-impossible-because-variable-is-a-mutable-property-tha
-
-                if (tempHamdler != null) {
+            try {
+                val temphandler = message_handler
+                if (temphandler != null) {
                     val bundle = Bundle()
-                    bundle.putInt(INT_KEY, counter)
-                    val message: Message = tempHamdler.obtainMessage()
-                    message.data = bundle
-                    message.what = MSG_INT_VALUE
-                    tempHamdler.sendMessage(message)
+                    val speed = location_now_L.getSpeed()
 
+                    bundle.putString("new_location", locationl_now)
+                    //bundle.put
+
+                    val message: Message = temphandler.obtainMessage()
+                    message.data = bundle
+                    message.what = 0
+                    temphandler.sendMessage(message)
 
                 }
-            } catch (t: Throwable) { // you should always ultimately catch all // exceptions in timer tasks.
-                println("debug: Timer Tick Failed. $t")
-            }*/
+            } catch (t: Throwable) {
+            }
         }
     }
-}
+     fun init_LocationManager() {
+         try {
+             location_manager = getSystemService(LOCATION_SERVICE) as LocationManager
+             val criteria = Criteria()
+             criteria.accuracy = Criteria.ACCURACY_FINE
+             val provider = location_manager.getBestProvider(criteria, true)
+             // get the last time's location
+             val location = location_manager.getLastKnownLocation(provider!!)
+             if(location != null) {
+                 onLocationChanged(location)
+             }
+             first_location = location!!
+
+             // update the location and call onLocationChanged
+             location_manager.requestLocationUpdates(provider, 0, 0f, this)
+
+         } catch (e: SecurityException) {
+             println("init location manager problem!!!")
+         }
+     }
+
+     override fun onLocationChanged(location: Location) {
+             val lat = location.latitude
+             val lng = location.longitude
+             val pos = lat.toString() + "," + lng.toString()
+             location_now_L = location
+             locationl_now = pos
+     }
+
+ }
 
 

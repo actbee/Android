@@ -23,21 +23,20 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 
 import java.util.ArrayList
+import java.util.Observer
 
-
-class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
+class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var my_map: GoogleMap
     private val PERMISSION_REQUEST_CODE = 0
-    private lateinit var location_manager: LocationManager
     private var map_centered = false
-    private lateinit var  marker_options: MarkerOptions
-    private lateinit var  polylines_options: PolylineOptions
-    private lateinit var  polylines: ArrayList<Polyline>
-    private lateinit var  now_marker: Marker
-    private lateinit var  type: String
+    private lateinit var marker_options: MarkerOptions
+    private lateinit var polylines_options: PolylineOptions
+    private lateinit var polylines: ArrayList<Polyline>
+    private lateinit var now_marker: Marker
+    private lateinit var type: String
     private lateinit var app_context: Context
-    private lateinit var service_intent:Intent
+    private lateinit var service_intent: Intent
     private var delete: Boolean = false
     private lateinit var exerciseentryViewModel: ExerciseEntryViewModel
     private lateinit var viewModelFactory: ExerciseEntryViewModelFactory
@@ -50,8 +49,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.map_layout)
-
-        val intent: Intent = getIntent()
+        val intent: Intent = intent
         val activity_type = intent.getStringExtra("activity_type")
         val input_type = intent.getStringExtra("input_type")
         // to set the input activity type
@@ -63,69 +61,37 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
                 type = "Unknown"
             }
         }
-
-        var id: Int = intent.getIntExtra("map_id", 0)
-        // decide if it needs to update the input or read the history from the database
-        when(id){
-            0 ->{
-                app_context = this.applicationContext
-                // open the service
-                service_intent = Intent(this, MapService::class.java)
-                startService(service_intent)
-           //     app_context.bindService(service_intent, map_ViewModel, Context.BIND_AUTO_CREATE)
-              //  map_ViewModel = ViewModelProvider(this).get(mapViewModel::class.java)
-
-                var map_fragment = supportFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment
-                map_fragment.getMapAsync(this)
-            }
-            else ->{
-                database = ExerciseEntryDatabase.getInstance(this)
-                databaseDao = database.exerciseEntryDatabaseDao
-                repository = ExerciseEntryRepository(databaseDao)
-                viewModelFactory = ExerciseEntryViewModelFactory(repository)
-                exerciseentryViewModel = ViewModelProvider(this,
-                    viewModelFactory).get(ExerciseEntryViewModel::class.java)
-
-                delete = true
-            }
-        }
-
+        val map_fragment = supportFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment
+        map_fragment.getMapAsync(this)
+        service_intent = Intent(this, MapService::class.java)
+        startService(service_intent)
+        map_ViewModel = ViewModelProvider(this).get(mapViewModel::class.java)
+        applicationContext.bindService(service_intent, map_ViewModel, Context.BIND_AUTO_CREATE)
+        map_ViewModel.position.observe(this, { it ->
+            val posget:String = it
+            val data = posget.split(",")
+            val lat = data[0].toDouble()
+            val lng = data[1].toDouble()
+            val pos = LatLng(lat, lng)
+            //Location_Changed(pos)
+        } )
     }
 
-
     override fun onMapReady(googleMap: GoogleMap) {
+        check_permission()
         my_map = googleMap
         my_map.mapType = GoogleMap.MAP_TYPE_NORMAL
+        my_map
         polylines_options = PolylineOptions()
         polylines_options.color(Color.BLACK)
         polylines = ArrayList()
         marker_options = MarkerOptions()
-
-        check_permission()
     }
 
-    fun init_LocationManager() {
-        try {
-            location_manager = getSystemService(LOCATION_SERVICE) as LocationManager
-            val criteria = Criteria()
-            criteria.accuracy = Criteria.ACCURACY_FINE
-            val provider = location_manager.getBestProvider(criteria, true)
-            // get the last time's location
-            val location = location_manager.getLastKnownLocation(provider!!)
-            if(location != null) {
-                onLocationChanged(location)
-            }
-            // update the location and call onLocationChanged every 1 second
-            location_manager.requestLocationUpdates(provider, 10, 0f, this)
-
-        } catch (e: SecurityException) {
-        }
-    }
-
-    override fun onLocationChanged(location: Location) {
-        val lat = location.latitude
-        val lng = location.longitude
-        val pos = LatLng(lat, lng)
+    fun Location_Changed(inpos:LatLng) {
+        val pos = inpos
+        val lat = inpos.latitude
+        val lng = inpos.longitude
         // update our map
         if (!map_centered) {
             val change_camera = CameraUpdateFactory.newLatLngZoom(pos, 15f)
@@ -149,31 +115,15 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
         polylines_options.add(pos)
         polylines.add(my_map.addPolyline(polylines_options))
         val message = findViewById<EditText>(R.id.type_stats)
-        message.setText(
-            "Type: " + type + "\n" +
-            lat.toString()+" , "+lng.toString())
+        val s = "Type: $type\n$lat , $lng"
+        message.setText(s)
     }
 
     fun check_permission() {
         if (Build.VERSION.SDK_INT < 23) return
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), PERMISSION_REQUEST_CODE)
-        else {
-            init_LocationManager()
-        }
     }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                init_LocationManager()
-            }
-        }
-    }
-
-    override fun onProviderDisabled(provider: String) {}
-    override fun onProviderEnabled(provider: String) {}
 
     fun MapSaveClicked(view:View?){
 
@@ -185,12 +135,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
 
     override fun onDestroy() {
         super.onDestroy()
-    //  app_context.unbindService()
+        app_context.unbindService(map_ViewModel)
         stopService(service_intent)
-
-        if (location_manager != null) {
-            location_manager.removeUpdates(this)
-        }
     }
 
     // add the delte bottom to the actionbar
@@ -203,13 +149,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener{
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        var id:Int = item.getItemId()
+        val id:Int = item.getItemId()
         if (id == R.id.history_delete_button){
 
         }
         return super.onOptionsItemSelected(item)
     }
-
-
-
 }
