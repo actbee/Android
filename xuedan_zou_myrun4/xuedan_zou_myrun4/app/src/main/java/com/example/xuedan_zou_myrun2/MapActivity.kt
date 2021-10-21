@@ -35,7 +35,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var polylines: ArrayList<Polyline>
     private lateinit var now_marker: Marker
     private lateinit var type: String
-    private lateinit var app_context: Context
+   // private lateinit var app_context: Context
     private lateinit var service_intent: Intent
     private var delete: Boolean = false
     private lateinit var exerciseentryViewModel: ExerciseEntryViewModel
@@ -68,12 +68,14 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         map_ViewModel = ViewModelProvider(this).get(mapViewModel::class.java)
         applicationContext.bindService(service_intent, map_ViewModel, Context.BIND_AUTO_CREATE)
         map_ViewModel.position.observe(this, { it ->
+           // val updated_data:MapEntry = it
+           // val posget:String = updated_data.location
             val posget:String = it
             val data = posget.split(",")
             val lat = data[0].toDouble()
             val lng = data[1].toDouble()
             val pos = LatLng(lat, lng)
-            //Location_Changed(pos)
+            Location_Changed(pos)
         } )
     }
 
@@ -135,7 +137,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onDestroy() {
         super.onDestroy()
-        app_context.unbindService(map_ViewModel)
+        applicationContext.unbindService(map_ViewModel)
         stopService(service_intent)
     }
 

@@ -14,9 +14,16 @@ class mapViewModel: ViewModel(), ServiceConnection {
     private var my_MessageHandler: MyMessageHandler = MyMessageHandler(Looper.getMainLooper())
 
     // MutableLiveData means you can change its value
+    /*
+     private val datas = MutableLiveData<MapEntry>()
+     val data: LiveData<MapEntry>
+        get() = datas
+     */
      private val positions = MutableLiveData<String>()
      val position: LiveData<String>
         get() = positions
+
+
 
 
     override fun onServiceConnected(name: ComponentName, iBinder: IBinder) {
@@ -33,8 +40,20 @@ class mapViewModel: ViewModel(), ServiceConnection {
         override fun handleMessage(message: Message) {
             if (message.what == 0) {
                 val bundle = message.data
-                positions.value = bundle.getString("new_location")
+                positions.value = bundle.getString("location")
+                //datas.value = bundle.getParcelable("new datas")
+                /*
+                var newdata = MapEntry()
+                newdata.location = bundle.getString("location")!!
+                newdata.speed = bundle.getFloat("speed")
+                newdata.avgspeed = bundle.getFloat("avgspeed")
+                newdata.time = bundle.getLong("time")
+                newdata.distance = bundle.getFloat("distance")
+                newdata.calorie = bundle.getDouble("calorie")
+                newdata.altitude = bundle.getDouble("altitude")
+                datas.value = newdata
 
+                 */
             }
         }
     }

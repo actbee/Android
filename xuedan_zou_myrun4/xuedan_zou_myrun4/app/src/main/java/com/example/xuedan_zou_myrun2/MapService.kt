@@ -29,13 +29,16 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
+
+
  class MapService : Service(),LocationListener{
     private lateinit var notification_manager: NotificationManager
     val NOTIFICATION_ID = 777
     private lateinit var  myBinder: My_Binder
     private val CHANNEL_ID = "notification channel"
     private lateinit var location_manager: LocationManager
-
+    private var sumspeed = 0
+    private var speed_num = 0
     private var message_handler: Handler? = null
 
     //private var counter = 0
@@ -45,6 +48,8 @@ import com.google.android.gms.maps.model.*
     private lateinit var first_location: Location
     private lateinit var location_now_L: Location
     private lateinit var locationl_now: String
+    private var starttime: Long = 0L
+
 
     override fun onCreate() {
         super.onCreate()
@@ -56,6 +61,7 @@ import com.google.android.gms.maps.model.*
         // put the icon on the bar
         showNotification()
         myBinder = My_Binder()
+        starttime = System.nanoTime()
         message_handler = null
         init_LocationManager()
     }
@@ -138,8 +144,36 @@ import com.google.android.gms.maps.model.*
                 if (temphandler != null) {
                     val bundle = Bundle()
                     val speed = location_now_L.getSpeed()
+                    speed_num += 1
+                    val avgspeed = (sumspeed + speed)/speed_num
+                    val altitude = location_now_L.getAltitude()
+                    val time = System.nanoTime() - starttime
+                    val distance = avgspeed * time
+                    val calorie = 0.001 * avgspeed
 
-                    bundle.putString("new_location", locationl_now)
+                    /*
+                    val map_entry = MapEntry()
+                    map_entry.altitude = altitude
+                    map_entry.avgspeed = avgspeed
+                    map_entry.calorie = calorie
+                    map_entry.distance = distance
+                    map_entry.location = locationl_now
+                    map_entry.speed = speed
+                    map_entry.time = time
+
+                     */
+
+                    bundle.putString("location", locationl_now)
+                    bundle.putFloat("speed",speed)
+                    bundle.putFloat("avgspeed",avgspeed)
+                    bundle.putLong("time", time)
+                    bundle.putFloat("distance", distance)
+                    bundle.putDouble("calorie", calorie)
+                    bundle.putDouble("altitude",altitude)
+
+
+
+                    //bundle.putParcelable("new datas", map_entry)
                     //bundle.put
 
                     val message: Message = temphandler.obtainMessage()
