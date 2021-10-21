@@ -48,10 +48,10 @@ class mapViewModel: ViewModel(), ServiceConnection {
                 newdata.location = bundle.getString("location")!!
                 newdata.speed = bundle.getFloat("speed")
                 newdata.avgspeed = bundle.getFloat("avgspeed")
-                newdata.time = bundle.getLong("time")
+                newdata.time = bundle.getFloat("time")
                 newdata.distance = bundle.getFloat("distance")
-                newdata.calorie = bundle.getDouble("calorie")
-                newdata.altitude = bundle.getDouble("altitude")
+                newdata.calorie = bundle.getFloat("calorie")
+                newdata.altitude = bundle.getFloat("altitude")
                 datas.value = newdata
 
             }

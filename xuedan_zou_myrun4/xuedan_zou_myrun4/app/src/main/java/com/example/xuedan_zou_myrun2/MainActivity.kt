@@ -108,6 +108,7 @@ class MainActivity : AppCompatActivity() {
                 var intent:Intent = Intent(this, MapActivity::class.java)
                 intent.putExtra("activity_type", myactivity_spinner.selectedItem.toString())
                 intent.putExtra("input_type", state)
+                intent.putExtra("activity_id", myactivity_spinner.selectedItemPosition)
                 startActivity(intent)
             }
         }

@@ -11,10 +11,10 @@ import com.google.android.gms.maps.model.LatLng
 data class MapEntry(
     var speed: Float = 0F,
     var avgspeed: Float = 0F,
-    var altitude: Double = 0.toDouble(),
-    var time: Long = 0L,
+    var altitude: Float = 0F,
+    var time: Float = 0F,
     var distance: Float = 0F,
-    var calorie:Double = 0.toDouble(),
+    var calorie:Float = 0F,
     var location:String = " "
 )
     //:Parcelable

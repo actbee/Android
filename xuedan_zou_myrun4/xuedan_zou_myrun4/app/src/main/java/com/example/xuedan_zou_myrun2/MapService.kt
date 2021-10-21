@@ -37,8 +37,6 @@ import com.google.android.gms.maps.model.*
     private lateinit var  myBinder: My_Binder
     private val CHANNEL_ID = "notification channel"
     private lateinit var location_manager: LocationManager
-    private var sumspeed = 0
-    private var speed_num = 0
     private var message_handler: Handler? = null
 
     //private var counter = 0
@@ -49,6 +47,10 @@ import com.google.android.gms.maps.model.*
     private lateinit var location_now_L: Location
     private lateinit var locationl_now: String
     private var starttime: Long = 0L
+    private var startaltitude: Double = 0.toDouble()
+    private var distance: Float = 0F
+    private var speed: Float = 0F
+    private var calorie: Float = 0F
 
 
     override fun onCreate() {
@@ -143,13 +145,13 @@ import com.google.android.gms.maps.model.*
                 val temphandler = message_handler
                 if (temphandler != null) {
                     val bundle = Bundle()
-                    val speed = location_now_L.getSpeed()
-                    speed_num += 1
-                    val avgspeed = (sumspeed + speed)/speed_num
-                    val altitude = location_now_L.getAltitude()
-                    val time = System.nanoTime() - starttime
-                    val distance = avgspeed * time
-                    val calorie = 0.001 * avgspeed
+                    speed = location_now_L.getSpeed() * 5
+
+                    val altitude = ((location_now_L.getAltitude() - startaltitude) * 0.01).toFloat()
+                    val time = (System.nanoTime() - starttime) * 0.000000001F
+                    distance = distance + speed * 0.01F
+                    val avgspeed = distance / (time * 0.01F)
+                    calorie = calorie + 0.01F * speed
 
                     /*
                     val map_entry = MapEntry()
@@ -166,10 +168,10 @@ import com.google.android.gms.maps.model.*
                     bundle.putString("location", locationl_now)
                     bundle.putFloat("speed",speed)
                     bundle.putFloat("avgspeed",avgspeed)
-                    bundle.putLong("time", time)
+                    bundle.putFloat("time", time)
                     bundle.putFloat("distance", distance)
-                    bundle.putDouble("calorie", calorie)
-                    bundle.putDouble("altitude",altitude)
+                    bundle.putFloat("calorie", calorie)
+                    bundle.putFloat("altitude",altitude)
 
 
 
@@ -198,7 +200,7 @@ import com.google.android.gms.maps.model.*
                  onLocationChanged(location)
              }
              first_location = location!!
-
+             startaltitude = first_location.getAltitude()
              // update the location and call onLocationChanged
              location_manager.requestLocationUpdates(provider, 0, 0f, this)
 
