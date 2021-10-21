@@ -58,16 +58,28 @@ class HistoryAdapter(val context: Context, var ExerciseEntryList: List<ExerciseE
             Context.MODE_PRIVATE
         )
         val unit = pref.getInt("unit", 0)
+        // get the seconds
+        val duration = ExerciseEntryList.get(position).duration
+        val sec = duration % 60
+        val min =( duration / 60.0 ).toInt()
+        var last_time: String = " "
+        if(entry_input == 0){
+            last_time = duration.toString() + "mins 0secs"
+        }
+        else {
+            if (min == 0) {
+                last_time = sec.toString() + "secs"
+            } else {
+                last_time = min.toString() + "mins " + sec.toString() + "secs"
+            }
+        }
         when(unit){
             R.id.metric ->{
-                my_subtitle.text = ExerciseEntryList.get(position).distance.toString()+" Kilometers, "+
-                        ExerciseEntryList.get(position).duration.toString()+"secs"
-
+                my_subtitle.text = ExerciseEntryList.get(position).distance.toString()+" Kilometers, "+ last_time
             }
                 else ->{
                     var transfer = ExerciseEntryList.get(position).distance * 0.621371F
-                    my_subtitle.text = transfer.toString()+" Miles, "+
-                            ExerciseEntryList.get(position).duration.toString()+"secs"
+                    my_subtitle.text = transfer.toString()+" Miles, "+ last_time
                 }
         }
         return view

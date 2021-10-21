@@ -250,6 +250,7 @@ class Distance_Dialogs: DialogFragment(){
             R.layout.text_dialog, null
         )
         val edit = view.findViewById<TextView>(R.id.text_dialog)
+        edit.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         val builder = AlertDialog.Builder(requireContext())
             .setTitle("Distance")
                 .setView(view)
@@ -258,7 +259,7 @@ class Distance_Dialogs: DialogFragment(){
                // Toast.makeText(requireActivity(),"get!"+ unit.toString(), Toast.LENGTH_SHORT).show()
                 if(!edit.text.toString().isBlank()) {
                     when(unit){
-                        2131296542 ->{
+                        R.id.metric ->{
                             // just save them as kl in database
                             pref.edit().putFloat(
                                 "saved_distance",
@@ -296,9 +297,9 @@ class Calories_Dialogs: DialogFragment() {
             .setTitle("Calories")
             .setPositiveButton("OK") { _, _ ->
                 if(!edit.text.toString().isBlank()) {
-                    pref.edit().putFloat(
+                    pref.edit().putInt(
                         "saved_calorie",
-                        edit.text.toString().toFloat()
+                        edit.text.toString().toInt()
                     ).apply()
                     dismiss()
                 }

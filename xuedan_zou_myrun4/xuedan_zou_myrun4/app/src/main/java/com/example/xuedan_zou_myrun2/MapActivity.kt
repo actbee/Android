@@ -176,13 +176,31 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
                 val message = findViewById<EditText>(R.id.type_stats)
                 //val s = "Type: $type\n$lat , $lng"
-
-                val s ="Type: $type\n" +
-                        "Avg speed: "+ String.format("%.2f",avgspeed).toString() + "km/h\n"+
-                        "Cur speed: n/a\n" +
-                        "Climb: " + String.format("%.2f",altitude).toString() +"Kilometers\n" +
-                        "Calorie: ${calorie.toInt()} \n" +
-                        "Distance: " + String.format("%.2f",distance) + "Kilometers\n"
+                // to transfer the unit
+                val pref: SharedPreferences = this.getSharedPreferences(
+                    "unit_saved",
+                    Context.MODE_PRIVATE
+                )
+                val unit = pref.getInt("unit", 0)
+                var s:String = " "
+                when(unit){
+                    R.id.metric ->{
+                        s ="Type: $type\n" +
+                                "Avg speed: "+ String.format("%.2f",avgspeed).toString() + "km/h\n"+
+                                "Cur speed: n/a\n" +
+                                "Climb: " + String.format("%.2f",altitude).toString() +"Kilometers\n" +
+                                "Calorie: ${calorie.toInt()} \n" +
+                                "Distance: " + String.format("%.2f",distance) + "Kilometers\n"
+                    }
+                    else ->{
+                        s ="Type: $type\n" +
+                                "Avg speed: "+ String.format("%.2f",avgspeed * 0.621371F).toString() + "m/h\n"+
+                                "Cur speed: n/a\n" +
+                                "Climb: " + String.format("%.2f",altitude * 0.621371F).toString() +"Miles\n" +
+                                "Calorie: ${calorie.toInt()} \n" +
+                                "Distance: " + String.format("%.2f",distance * 0.621371F) + "Miles\n"
+                    }
+                }
 
                 message.setText(s)
 

@@ -82,7 +82,7 @@ class DisplayEntryActivity : AppCompatActivity(){
             13 -> activity_view.setText("Other")
         }
         date_view.setText(get_date)
-        duration_view.setText(get_duration.toString()+"secs")
+        duration_view.setText(get_duration.toString()+"mins 0 secs")
         calorie_view.setText(get_calorie.toString()+" cals")
         heart_view.setText(get_heartrate.toString()+" bpm")
         distance_view.setText(get_distance.toString()+" Kilometers")
