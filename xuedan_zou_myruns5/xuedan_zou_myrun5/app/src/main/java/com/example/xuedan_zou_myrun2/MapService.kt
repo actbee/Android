@@ -88,7 +88,7 @@ class MapService : Service(),LocationListener, SensorEventListener {
         super.onCreate()
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         // tracking the sensor data
-        val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
         sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST)
         acc_buffer = ArrayBlockingQueue<Double>(ACCELEROMETER_BUFFER_CAPACITY)
 
@@ -238,6 +238,13 @@ class MapService : Service(),LocationListener, SensorEventListener {
                             blocksize++
                         }
 
+                        var max_acc:Double = 0.0
+                        for(value:Double in accBlock){
+                            if(max_acc < value){
+                                max_acc = value
+                            }
+                        }
+
                         myfft.fft(re, im)
 
                         for (i in 0..ACCELEROMETER_BLOCK_CAPACITY-1) {
@@ -245,7 +252,8 @@ class MapService : Service(),LocationListener, SensorEventListener {
                             featvect[i] = mag
                             im[i] = .0 // Clear the field
                         }
-                        featvect[ACCELEROMETER_BLOCK_CAPACITY] = accBlock.toList().maxOrNull()!!
+                        //featvect[ACCELEROMETER_BLOCK_CAPACITY] = accBlock.toList().maxOrNull()!!
+                        featvect[ACCELEROMETER_BLOCK_CAPACITY] = max_acc
                         // transfer the type of our data and pass it into the classifier
                         val in_object:Array<Double?> = arrayOfNulls(featvect.size)
                         for(i in featvect.indices){
@@ -326,7 +334,7 @@ class MapService : Service(),LocationListener, SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        if (event != null && event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+        if (event != null && event.sensor.type == Sensor.TYPE_LINEAR_ACCELERATION) {
             /*
              x = (event.values[0] / SensorManager.GRAVITY_EARTH).toDouble()
              y = (event.values[1] / SensorManager.GRAVITY_EARTH).toDouble()
