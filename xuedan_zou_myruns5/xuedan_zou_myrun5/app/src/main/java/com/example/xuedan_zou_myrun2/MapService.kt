@@ -29,9 +29,14 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
+import java.util.concurrent.ArrayBlockingQueue
 
 
- class MapService : Service(),LocationListener{
+class MapService : Service(),LocationListener, SensorEventListener{
     private lateinit var notification_manager: NotificationManager
     val NOTIFICATION_ID = 777
     private lateinit var  myBinder: My_Binder
@@ -53,9 +58,21 @@ import com.google.android.gms.maps.model.*
     private var calorie: Float = 0F
     private var input_type:String = " "
 
+     private lateinit var sensorManager: SensorManager
+     private var x: Double = 0.0
+     private var y: Double = 0.0
+     private var z: Double = 0.0
+
+     private lateinit var acc_buffer: ArrayBlockingQueue<Double>
+
 
     override fun onCreate() {
         super.onCreate()
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
+        // tracking the sensor data
+        val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+
         locationl_now = "0,0"
         my_task = MyTask()
         // control the update rate
@@ -92,6 +109,7 @@ import com.google.android.gms.maps.model.*
 
     override fun onDestroy() {
         super.onDestroy()
+        sensorManager.unregisterListener(this)
         println("debug: Service onDestroy")
         cleanupTasks()
     }
@@ -222,6 +240,15 @@ import com.google.android.gms.maps.model.*
              locationl_now = pos
      }
 
+     override fun onSensorChanged(event: SensorEvent?) {
+         if (event != null && event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
+             x = (event.values[0] / SensorManager.GRAVITY_EARTH).toDouble()
+             y = (event.values[1] / SensorManager.GRAVITY_EARTH).toDouble()
+             z = (event.values[2] / SensorManager.GRAVITY_EARTH).toDouble()
+         }
+     }
+
+     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
  }
 
 
