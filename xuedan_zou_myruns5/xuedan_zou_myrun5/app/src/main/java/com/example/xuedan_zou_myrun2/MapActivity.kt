@@ -138,6 +138,15 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                     val message = findViewById<EditText>(R.id.type_stats)
                     //val s = "Type: $type\n$lat , $lng"
 
+                    if(type == "Unknown"){
+                        var type_id:Int = updated_data.activity_type
+                        when(type_id){
+                            0 -> type = "Standing"
+                            1 -> type = "Walking"
+                            2 -> type = "Running"
+                        }
+                    }
+
                     val s ="Type: $type\n" +
                             "Avg speed: "+ String.format("%.2f",updated_data.avgspeed).toString() + "km/h\n"+
                             "Cur speed: "+ String.format("%.2f",updated_data.speed).toString() + "km/h\n" +

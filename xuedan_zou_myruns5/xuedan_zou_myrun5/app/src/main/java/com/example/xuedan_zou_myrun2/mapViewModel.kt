@@ -52,6 +52,7 @@ class mapViewModel: ViewModel(), ServiceConnection {
                 newdata.distance = bundle.getFloat("distance")
                 newdata.calorie = bundle.getFloat("calorie")
                 newdata.altitude = bundle.getFloat("altitude")
+                newdata.activity_type = bundle.getInt("activity_type", -1)
                 datas.value = newdata
 
             }
