@@ -16,6 +16,7 @@ data class MapEntry(
     var distance: Float = 0F,
     var calorie:Float = 0F,
     var location:String = " ",
-    var activity_type:Int = -1
+    var activity_type:Int = -1,
+    var current_activity:Int = -1
 )
     //:Parcelable

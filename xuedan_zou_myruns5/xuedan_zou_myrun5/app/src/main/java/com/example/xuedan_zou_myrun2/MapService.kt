@@ -37,14 +37,6 @@ import java.security.KeyStore
 import java.util.concurrent.ArrayBlockingQueue
 import kotlin.collections.ArrayList
 
-/*
-import weka.core.Attribute
-import weka.core.DenseInstance
-import weka.core.Instance
-import weka.core.Instances
-import weka.core.converters.ArffSaver
-import weka.core.converters.ConverterUtils.DataSource
-*/
 
 class MapService : Service(),LocationListener, SensorEventListener {
     private lateinit var notification_manager: NotificationManager
@@ -70,12 +62,10 @@ class MapService : Service(),LocationListener, SensorEventListener {
     private var input_type: String = " "
 
     private lateinit var sensorManager: SensorManager
-    private var x: Double = 0.0
-    private var y: Double = 0.0
-    private var z: Double = 0.0
 
     private lateinit var acc_buffer: ArrayBlockingQueue<Double>
-    public val ACCELEROMETER_BUFFER_CAPACITY: Int = 2048
+    // public val ACCELEROMETER_BUFFER_CAPACITY: Int = 2048
+    public val ACCELEROMETER_BUFFER_CAPACITY: Int = 128
     public val ACCELEROMETER_BLOCK_CAPACITY: Int = 64
     // var latenint AsyncTask: OnSensorChangedTask
 
@@ -260,15 +250,17 @@ class MapService : Service(),LocationListener, SensorEventListener {
                             in_object[i] = featvect[i]
                         }
                         var weka_classifier:Double = WekaClassifier.classify(in_object)
+                        var current_type = weka_classifier.toInt()
+                        bundle.putInt("current_activity", current_type)
 
-                        when(weka_classifier){
-                            0.toDouble() -> {
+                        when(current_type){
+                            0 -> {
                                 counter_stand++
                             }
-                            1.toDouble() -> {
+                            1 -> {
                                 counter_walk++
                             }
-                            2.toDouble() -> {
+                            2 -> {
                                 counter_run++
                             }
                         }
@@ -335,11 +327,6 @@ class MapService : Service(),LocationListener, SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null && event.sensor.type == Sensor.TYPE_LINEAR_ACCELERATION) {
-            /*
-             x = (event.values[0] / SensorManager.GRAVITY_EARTH).toDouble()
-             y = (event.values[1] / SensorManager.GRAVITY_EARTH).toDouble()
-             z = (event.values[2] / SensorManager.GRAVITY_EARTH).toDouble()
-             */
             var magnitude = Math.sqrt(
                 (event.values[0] * event.values[0]
                         + event.values[1] * event.values[1]

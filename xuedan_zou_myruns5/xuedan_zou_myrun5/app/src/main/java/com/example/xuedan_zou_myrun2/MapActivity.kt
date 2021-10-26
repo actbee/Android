@@ -87,20 +87,20 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         when (input_type) {
             "GPS" -> {
                 when (activity_type) {
-                    0 -> type = "Running, "
-                    1 -> type = "Walking, "
-                    2 -> type = "Standing, "
-                    3 -> type = "Cycling, "
-                    4 -> type = "Hiking, "
-                    5 -> type = "Downhill skiing, "
-                    6 -> type = "Cross-country skiing, "
-                    7 -> type = "Snowboarding, "
-                    8 -> type = "Skating, "
-                    9 -> type = "Swimming, "
-                    10 -> type = "Mountain biking, "
-                    11 -> type = "Wheelchair, "
-                    12 -> type = "Elliptical, "
-                    13 -> type = "Other, "
+                    0 -> type = "Running"
+                    1 -> type = "Walking"
+                    2 -> type = "Standing"
+                    3 -> type = "Cycling"
+                    4 -> type = "Hiking"
+                    5 -> type = "Downhill skiing"
+                    6 -> type = "Cross-country skiing"
+                    7 -> type = "Snowboarding"
+                    8 -> type = "Skating"
+                    9 -> type = "Swimming"
+                    10 -> type = "Mountain biking"
+                    11 -> type = "Wheelchair"
+                    12 -> type = "Elliptical"
+                    13 -> type = "Other"
                 }
             }
             "Automatic" -> {
@@ -138,12 +138,22 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                     val message = findViewById<EditText>(R.id.type_stats)
                     //val s = "Type: $type\n$lat , $lng"
 
-                    if(type == "Unknown"){
-                        var type_id:Int = updated_data.activity_type
+                    if(input_type == "Automatic"){
+                        // show the current activity
+                        var type_id:Int = updated_data.current_activity
                         when(type_id){
                             0 -> type = "Standing"
                             1 -> type = "Walking"
                             2 -> type = "Running"
+                        }
+                        // save the general activity
+                        when(updated_data.activity_type){
+                            // 0 is standing so maps to 2
+                            0 -> activity_type = 2
+                            // 1 is walking so maps to 1
+                            1 -> activity_type = 1
+                            // 2 is running so maps to 0
+                            2 -> activity_type = 0
                         }
                     }
 
@@ -177,6 +187,25 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 // seperate our locationlist
                 val locations = locationlist.split(",")
                 val end:Int = locations.size - 2
+
+                if(input_type == "Automatic"){
+                    when(activity_type){
+                        0 -> type = "Running"
+                        1 -> type = "Walking"
+                        2 -> type = "Standing"
+                        3 -> type = "Cycling"
+                        4 -> type = "Hiking"
+                        5 -> type = "Downhill skiing"
+                        6 -> type = "Cross-country skiing"
+                        7 -> type = "Snowboarding"
+                        8 -> type = "Skating"
+                        9 -> type = "Swimming"
+                        10 -> type = "Mountain biking"
+                        11 -> type = "Wheelchair"
+                        12 -> type = "Elliptical"
+                        13 -> type = "Other"
+                    }
+                }
 
                 for (i: Int in 0..end step 2) {
                     var lat = locations[i].toDouble()
